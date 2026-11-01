@@ -4,7 +4,11 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.MotionEvent
@@ -12,6 +16,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -73,7 +78,7 @@ class LyricsActivity : Activity() {
     private fun refresh() {
         val track = NowPlaying.track
         val lyrics = NowPlaying.lyrics
-        findViewById<View>(R.id.root).setBackgroundColor(NowPlaying.albumColor ?: DEFAULT_BG)
+        applyBackdrop()
         findViewById<TextView>(R.id.lyrics_title).text = track?.title ?: getString(R.string.app_name)
         findViewById<TextView>(R.id.lyrics_artist).text = track?.artist.orEmpty()
         findViewById<TextView>(R.id.lyrics_source).text = when {
@@ -105,7 +110,33 @@ class LyricsActivity : Activity() {
         highlight(NowPlaying.currentIndex())
     }
 
+    private var backdropArt: Bitmap? = null
+
+    /**
+     * Android 12+: la portada difuminada con el blur nativo del sistema (RenderEffect).
+     * En versiones anteriores, el color promedio de la portada, que no cuesta nada dibujar.
+     */
+    private fun applyBackdrop() {
+        findViewById<View>(R.id.root).setBackgroundColor(NowPlaying.albumColor ?: DEFAULT_BG)
+        val image = findViewById<ImageView>(R.id.lyrics_backdrop)
+        val scrim = findViewById<View>(R.id.lyrics_scrim)
+        val art = NowPlaying.albumArt
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || art == null) {
+            image.visibility = View.GONE
+            scrim.visibility = View.GONE
+            return
+        }
+        image.visibility = View.VISIBLE
+        scrim.visibility = View.VISIBLE
+        if (art === backdropArt) return
+        backdropArt = art
+        image.setImageBitmap(art)
+        image.setRenderEffect(RenderEffect.createBlurEffect(BLUR_RADIUS, BLUR_RADIUS, Shader.TileMode.CLAMP))
+    }
+
     private fun showMessage(message: Int) {
+        colorAnimators.values.forEach { it.cancel() }
+        colorAnimators.clear()
         shown = null
         shownMessage = message
         highlighted = -1
@@ -120,6 +151,8 @@ class LyricsActivity : Activity() {
     }
 
     private fun build(lyrics: Lyrics) {
+        colorAnimators.values.forEach { it.cancel() }
+        colorAnimators.clear()
         shown = lyrics
         shownMessage = 0
         highlighted = -1
@@ -143,16 +176,26 @@ class LyricsActivity : Activity() {
 
     private fun highlight(index: Int) {
         if (index == highlighted) return
-        (container.getChildAt(highlighted) as? TextView)?.let { animateLine(it, current = false) }
+        // La animación nunca dura más que la mitad de la línea: en las partes rápidas se acorta
+        // y, si no hay tiempo, el cambio es instantáneo en vez de quedar cortado a la mitad.
+        val budget = NowPlaying.currentLineDurationMs() / 2
+        val duration = if (!Device.animationsEnabled || budget < MIN_ANIMATION_MS) 0L
+        else minOf(Device.lineAnimationMs(this), budget)
+
+        (container.getChildAt(highlighted) as? TextView)?.let { animateLine(it, current = false, duration) }
         highlighted = index
         val view = container.getChildAt(index) as? TextView ?: return
-        animateLine(view, current = true)
+        animateLine(view, current = true, duration)
         if (SystemClock.elapsedRealtime() - userScrolledAt > FOLLOW_PAUSE_MS) {
             view.post {
                 val target = (view.top + view.height / 2 - scroll.height / 2).coerceAtLeast(0)
                 scrollAnimator?.cancel()
+                if (duration == 0L) {
+                    scroll.scrollTo(0, target)
+                    return@post
+                }
                 scrollAnimator = ObjectAnimator.ofInt(scroll, "scrollY", scroll.scrollY, target).apply {
-                    duration = ANIMATION_MS
+                    this.duration = duration
                     interpolator = DecelerateInterpolator(1.6f)
                     start()
                 }
@@ -161,21 +204,33 @@ class LyricsActivity : Activity() {
     }
 
     private var scrollAnimator: ObjectAnimator? = null
+    private val colorAnimators = HashMap<View, ValueAnimator>()
 
-    /** La línea que entra se ilumina y crece un poco; la que sale vuelve a su estado. */
-    private fun animateLine(view: TextView, current: Boolean) {
-        val from = view.currentTextColor
+    /**
+     * La línea que entra se ilumina (y en equipos que lo soportan bien, crece un poco); la que
+     * sale vuelve a su estado. Cada vista cancela su animación anterior antes de empezar otra,
+     * así las líneas rápidas no se pisan.
+     */
+    private fun animateLine(view: TextView, current: Boolean, duration: Long) {
         val to = if (current) CURRENT_COLOR else LINE_COLOR
-        ValueAnimator.ofArgb(from, to).apply {
-            duration = ANIMATION_MS
-            addUpdateListener { view.setTextColor(it.animatedValue as Int) }
-            start()
-        }
+        val scale = if (current && !Device.lite(this)) CURRENT_SCALE else 1f
+        colorAnimators.remove(view)?.cancel()
+        view.animate().cancel()
         // Escala desde el borde izquierdo para que el texto no se salga por la izquierda.
         view.pivotX = 0f
         view.pivotY = view.height / 2f
-        val scale = if (current) CURRENT_SCALE else 1f
-        view.animate().scaleX(scale).scaleY(scale).setDuration(ANIMATION_MS)
+        if (duration == 0L) {
+            view.setTextColor(to)
+            view.scaleX = scale
+            view.scaleY = scale
+            return
+        }
+        colorAnimators[view] = ValueAnimator.ofArgb(view.currentTextColor, to).apply {
+            this.duration = duration
+            addUpdateListener { view.setTextColor(it.animatedValue as Int) }
+            start()
+        }
+        view.animate().scaleX(scale).scaleY(scale).setDuration(duration)
             .setInterpolator(DecelerateInterpolator()).start()
     }
 
@@ -206,7 +261,8 @@ class LyricsActivity : Activity() {
         private const val LINE_COLOR = 0x73FFFFFF
         private const val CURRENT_COLOR = 0xFFFFFFFF.toInt()
         private const val FOLLOW_PAUSE_MS = 4_000L
-        private const val ANIMATION_MS = 450L
+        private const val MIN_ANIMATION_MS = 90L
+        private const val BLUR_RADIUS = 90f
         private const val CURRENT_SCALE = 1.06f
     }
 }

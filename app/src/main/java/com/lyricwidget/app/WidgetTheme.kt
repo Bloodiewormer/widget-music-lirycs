@@ -2,6 +2,7 @@ package com.lyricwidget.app
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 
 /** Apariencia del widget. El fondo es una forma blanca que se tiñe al dibujarla. */
 object WidgetTheme {
@@ -30,16 +31,21 @@ object WidgetTheme {
         0xFFD946EF.toInt(), // fucsia
     )
 
-    /** `color = null` significa "tomar el color de la portada del álbum". */
-    class Background(val label: Int, val color: Int?, val alpha: Int, val foreground: Int)
+    /**
+     * `color = null` significa "tomar el color de la portada del álbum".
+     * `system = true`: colores Material You del fondo de pantalla (solo Android 12+).
+     */
+    class Background(val label: Int, val color: Int?, val alpha: Int, val foreground: Int, val system: Boolean = false)
 
-    val BACKGROUNDS = arrayOf(
+    // "Sistema" va al final para que los índices guardados de las demás opciones no cambien.
+    val BACKGROUNDS: Array<Background> = listOfNotNull(
         Background(R.string.bg_album, null, 235, Color.WHITE),
         Background(R.string.bg_dark, 0xFF202124.toInt(), 215, Color.WHITE),
         Background(R.string.bg_black, Color.BLACK, 240, Color.WHITE),
         Background(R.string.bg_glass, Color.BLACK, 80, Color.WHITE),
         Background(R.string.bg_light, Color.WHITE, 240, 0xFF202124.toInt()),
-    )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) Background(R.string.bg_system, null, 240, Color.WHITE, system = true) else null,
+    ).toTypedArray()
 
     val TEXT_SIZES = intArrayOf(R.string.size_s, R.string.size_m, R.string.size_l, R.string.size_xl)
     private val TEXT_SP = floatArrayOf(13f, 15f, 18f, 22f)
@@ -72,6 +78,9 @@ object WidgetTheme {
     /** Color de fondo efectivo: con "Portada" y sin carátula disponible se usa el oscuro. */
     fun backgroundColor(context: Context): Int {
         val style = BACKGROUNDS[backgroundIndex(context)]
+        if (style.system && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return context.getColor(android.R.color.system_accent1_800)
+        }
         return style.color ?: NowPlaying.albumColor ?: 0xFF202124.toInt()
     }
 

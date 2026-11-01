@@ -6,9 +6,12 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.SizeF
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
@@ -67,12 +70,22 @@ class LyricsWidget : AppWidgetProvider() {
          */
         private var face = 0
         private var faceContent: String? = null
+        private var lastFlipAt = 0L
 
         fun updateAll(context: Context) {
             val content = "${NowPlaying.track?.key}|${NowPlaying.status}|${System.identityHashCode(NowPlaying.lyrics)}|${NowPlaying.currentIndex()}"
             if (content != faceContent) {
                 faceContent = content
-                face = 1 - face
+                // Animar solo si hay tiempo: si la línea es más corta que la animación, o la
+                // anterior todavía no termina, cambiar al instante en la misma cara. Así una parte
+                // rápida de la canción no corta la transición a la mitad.
+                val now = SystemClock.elapsedRealtime()
+                val animation = Device.widgetAnimationMs
+                val room = NowPlaying.currentLineDurationMs() >= animation * 2 && now - lastFlipAt >= animation + 60
+                if (Device.animationsEnabled && room) {
+                    face = 1 - face
+                    lastFlipAt = now
+                }
             }
             val manager = AppWidgetManager.getInstance(context)
             for (id in ids(context)) manager.updateAppWidget(id, build(context, manager.getAppWidgetOptions(id)))
@@ -131,6 +144,13 @@ class LyricsWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.progress_light, if (progress >= 0 && lightBar) View.VISIBLE else View.GONE)
             views.setViewVisibility(R.id.progress_dark, if (progress >= 0 && !lightBar) View.VISIBLE else View.GONE)
             views.setProgressBar(if (lightBar) R.id.progress_light else R.id.progress_dark, 1000, progress.coerceAtLeast(0), false)
+            if (Device.modern) {
+                // Android 12+: la barra toma el color de acento en vez de blanco o gris fijo.
+                views.setColorStateList(
+                    if (lightBar) R.id.progress_light else R.id.progress_dark, "setProgressTintList",
+                    ColorStateList.valueOf(WidgetTheme.currentLineColor(context)),
+                )
+            }
 
             val track = NowPlaying.track
             val lyrics = NowPlaying.lyrics
@@ -189,9 +209,16 @@ class LyricsWidget : AppWidgetProvider() {
         private fun fitLines(context: Context, options: Bundle?, sp: Float): Fit {
             val config = context.resources.configuration
             val landscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE
-            val height = options?.getInt(
+            val legacyHeight = options?.getInt(
                 if (landscape) AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT else AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT,
             ) ?: 0
+            // Android 12+ informa todos los tamaños posibles del widget; se usa el más bajo para que
+            // nada quede cortado en ninguna orientación.
+            @Suppress("DEPRECATION")
+            val modernHeight = if (Device.modern) {
+                options?.getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)?.minOfOrNull { it.height }?.toInt()
+            } else null
+            val height = modernHeight ?: legacyHeight
             if (height <= 0) return Fit(2, prev = true, next = true, next2 = false)
 
             val scale = config.fontScale * 1.25f // alto de una fila de texto ≈ 1.25 × tamaño de letra
