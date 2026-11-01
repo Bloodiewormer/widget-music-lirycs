@@ -42,6 +42,10 @@
     <string name="now_full">Ver letra completa</string>
     <string name="lyrics_activity">Letra</string>
     <string name="lyrics_settings">Ajustes</string>
+    <string name="text_smaller">A−</string>
+    <string name="text_bigger">A+</string>
+    <string name="cd_text_smaller">Letra más pequeña</string>
+    <string name="cd_text_bigger">Letra más grande</string>
 
     <!-- Búsqueda manual -->
     <string name="section_search">Búsqueda manual</string>

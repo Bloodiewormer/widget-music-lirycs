@@ -11,11 +11,11 @@
 
 <p align="center">
   <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
-    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.0-6D28D9?logo=android&logoColor=white">
+    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.1-6D28D9?logo=android&logoColor=white">
   </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
-  <img alt="APK ~73 KB" src="https://img.shields.io/badge/APK-~73%20KB-6D28D9">
+  <img alt="APK ~81 KB" src="https://img.shields.io/badge/APK-~81%20KB-6D28D9">
   <img alt="Sin backend" src="https://img.shields.io/badge/backend-ninguno-0F172A">
 </p>
 
@@ -47,7 +47,7 @@
 | **Widget redimensionable** | Muestra de 1 a 4 líneas según el alto que le des; calcula qué cabe para que ninguna quede cortada. Barra fina con el avance de la canción. |
 | **Reloj cuando no hay música** | Sin reproductor activo, o tras 2 minutos en pausa, el widget muestra la hora y la fecha (`TextClock`, que Android actualiza sin despertar a la app). |
 | **Ajuste de desfase** | Botones `−` / `+` en el propio widget (pasos de 0.5 s). Se guarda por canción. |
-| **Letra completa** | Toca la letra en el widget para verla entera, sobre el color de la portada, con la línea actual resaltada y centrada. Toca cualquier línea para saltar a ese momento de la canción. |
+| **Letra completa** | Toca la letra en el widget para verla entera, sobre el color de la portada, con la línea actual resaltada y centrada. Toca cualquier línea para saltar a ese momento de la canción. Incluye desfase, tamaño de letra `A−`/`A+` y mantiene la pantalla encendida mientras suena (modo karaoke). |
 | **Búsqueda manual** | Si no encuentra la letra o trae la equivocada, corrige artista/título en la app y elige el resultado correcto. |
 | **Caché offline** | Cada letra se descarga una sola vez y queda guardada; funciona sin internet para canciones ya escuchadas. |
 | **Limpieza de títulos** | Quita "Remastered 2011", "(Official Video)", "feat. …", "- Topic", "VEVO"… y entiende títulos de YouTube tipo "Artista - Canción". |
@@ -75,12 +75,12 @@ Igual que [Pano Scrobbler](https://github.com/kawaiiDango/pano-scrobbler): Andro
 
 ### Opción A: descargar el APK (recomendado)
 
-👉 **[Descargar LyricWidget-v1.0.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.0.apk)**
+👉 **[Descargar LyricWidget-v1.1.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.1.apk)**
 
 Ábrelo en el teléfono (permitiendo instalar apps desconocidas) o instálalo por USB:
 
 ```bash
-adb install -r LyricWidget-v1.0.apk
+adb install -r LyricWidget-v1.1.apk
 ```
 
 ### Opción B: compilar desde el código fuente

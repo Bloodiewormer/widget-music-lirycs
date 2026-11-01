@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -38,6 +39,10 @@ class LyricsActivity : Activity() {
         findViewById<Button>(R.id.lyrics_settings).setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
+        findViewById<Button>(R.id.lyrics_offset_minus).setOnClickListener { NowPlaying.adjustOffset(-NowPlaying.OFFSET_STEP_MS) }
+        findViewById<Button>(R.id.lyrics_offset_plus).setOnClickListener { NowPlaying.adjustOffset(NowPlaying.OFFSET_STEP_MS) }
+        findViewById<Button>(R.id.lyrics_smaller).setOnClickListener { resize(-TEXT_STEP_SP) }
+        findViewById<Button>(R.id.lyrics_bigger).setOnClickListener { resize(TEXT_STEP_SP) }
         scroll.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_MOVE) userScrolledAt = SystemClock.elapsedRealtime()
             false
@@ -73,6 +78,13 @@ class LyricsActivity : Activity() {
             lyrics.synced -> getString(R.string.lyrics_synced, lyrics.source)
             else -> getString(R.string.lyrics_plain, lyrics.source)
         }
+        findViewById<View>(R.id.lyrics_offset_box).visibility =
+            if (lyrics?.synced == true && NowPlaying.status == NowPlaying.Status.FOUND) View.VISIBLE else View.INVISIBLE
+        findViewById<TextView>(R.id.lyrics_offset).text = LyricsWidget.formatOffset(NowPlaying.offsetMs())
+
+        // Modo karaoke: la pantalla no se apaga mientras suena música con esta vista abierta.
+        if (NowPlaying.isPlaying) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         val message = when (NowPlaying.status) {
             NowPlaying.Status.NO_ACCESS -> R.string.widget_no_access
@@ -112,7 +124,7 @@ class LyricsActivity : Activity() {
         lyrics.lines.forEachIndexed { index, line ->
             container.addView(TextView(this).apply {
                 text = line.text.ifBlank { "♪" }
-                textSize = 22f
+                textSize = textSp()
                 setTextColor(LINE_COLOR)
                 setPadding(0, dp(8), 0, dp(8))
                 if (lyrics.synced) {
@@ -140,9 +152,29 @@ class LyricsActivity : Activity() {
         }
     }
 
+    private fun textSp(): Float = prefs(this).getFloat(KEY_TEXT_SP, DEFAULT_TEXT_SP)
+
+    /** Cambia el tamaño de todas las líneas y vuelve a centrar la actual. */
+    private fun resize(deltaSp: Float) {
+        val size = (textSp() + deltaSp).coerceIn(MIN_TEXT_SP, MAX_TEXT_SP)
+        prefs(this).edit().putFloat(KEY_TEXT_SP, size).apply()
+        if (shown == null) return
+        for (i in 0 until container.childCount) (container.getChildAt(i) as TextView).textSize = size
+        val current = highlighted
+        highlighted = -1
+        userScrolledAt = 0
+        // Esperar a que se vuelva a medir el texto antes de centrar la línea.
+        container.postDelayed({ highlight(current) }, 100)
+    }
+
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
 
     companion object {
+        private const val KEY_TEXT_SP = "lyrics_text_sp"
+        private const val DEFAULT_TEXT_SP = 22f
+        private const val MIN_TEXT_SP = 14f
+        private const val MAX_TEXT_SP = 40f
+        private const val TEXT_STEP_SP = 2f
         private const val DEFAULT_BG = 0xFF111827.toInt()
         private const val LINE_COLOR = 0x73FFFFFF
         private const val CURRENT_COLOR = 0xFFFFFFFF.toInt()
