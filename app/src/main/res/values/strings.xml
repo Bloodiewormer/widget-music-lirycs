@@ -80,6 +80,7 @@
     <string name="bg_black">Negro</string>
     <string name="bg_glass">Cristal</string>
     <string name="bg_light">Claro</string>
+    <string name="bg_system">Sistema</string>
     <string name="size_s">Pequeño</string>
     <string name="size_m">Mediano</string>
     <string name="size_l">Grande</string>

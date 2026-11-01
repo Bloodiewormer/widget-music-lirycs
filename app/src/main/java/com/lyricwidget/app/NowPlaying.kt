@@ -47,6 +47,9 @@ object NowPlaying {
         private set
     var albumColor: Int? = null
         private set
+    /** Portada reducida, solo en Android 12+. */
+    var albumArt: Bitmap? = null
+        private set
     var playerIntent: PendingIntent? = null
         private set
     private var controls: MediaController.TransportControls? = null
@@ -99,6 +102,15 @@ object NowPlaying {
 
     fun currentIndex(): Int = lyrics?.indexAt(positionMs(), track?.durationMs ?: 0) ?: -1
 
+    /** Cuánto dura en total la línea actual; muy grande si no hay letra sincronizada. */
+    fun currentLineDurationMs(): Long {
+        val words = lyrics?.takeIf { it.synced } ?: return Long.MAX_VALUE
+        val index = currentIndex()
+        val start = words.lines.getOrNull(index)?.timeMs ?: 0L
+        val end = words.lines.getOrNull(index + 1)?.timeMs ?: return Long.MAX_VALUE
+        return ((end - start) / (state?.playbackSpeed?.takeIf { it > 0f } ?: 1f)).toLong()
+    }
+
     /** Salta en el reproductor al inicio de la línea `index` (solo letras sincronizadas). */
     fun seekToLine(index: Int) {
         val line = lyrics?.takeIf { it.synced }?.lines?.getOrNull(index) ?: return
@@ -127,15 +139,21 @@ object NowPlaying {
         controls = controller.transportControls
         if (next.key != track?.key) {
             track = next
-            albumColor = dominantColor(
-                metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART) ?: metadata.getBitmap(MediaMetadata.METADATA_KEY_ART),
-            )
+            val art = metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART) ?: metadata.getBitmap(MediaMetadata.METADATA_KEY_ART)
+            albumColor = dominantColor(art)
+            // Solo Android 12+ la usa (fondo difuminado); en equipos viejos no se guarda para ahorrar memoria.
+            albumArt = if (Device.modern) art?.let { runCatching { Bitmap.createScaledBitmap(it, 160, 160, true) }.getOrNull() } else null
             retries = 0
             refreshAudioContext()
             load(force = false)
-        } else if (next.durationMs > 0 && track?.durationMs != next.durationMs) {
-            // Algunos reproductores publican la duración un instante después del título.
-            track = next
+        } else {
+            // Algunos reproductores publican la duración y la portada un instante después del título.
+            if (next.durationMs > 0 && track?.durationMs != next.durationMs) track = next
+            if (albumColor == null) {
+                val art = metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART) ?: metadata.getBitmap(MediaMetadata.METADATA_KEY_ART)
+                albumColor = dominantColor(art)
+                if (Device.modern) albumArt = art?.let { runCatching { Bitmap.createScaledBitmap(it, 160, 160, true) }.getOrNull() }
+            }
         }
         changed()
     }
@@ -149,6 +167,7 @@ object NowPlaying {
         playerIntent = null
         controls = null
         albumColor = null
+        albumArt = null
         searching = false
         unavailable = false
         main.removeCallbacks(retry)
