@@ -37,7 +37,7 @@ class MainActivity : Activity() {
         }
         findViewById<Button>(R.id.offset_minus).setOnClickListener { NowPlaying.adjustOffset(-NowPlaying.OFFSET_STEP_MS) }
         findViewById<Button>(R.id.offset_plus).setOnClickListener { NowPlaying.adjustOffset(NowPlaying.OFFSET_STEP_MS) }
-        findViewById<Button>(R.id.offset_reset).setOnClickListener { NowPlaying.setOffset(0) }
+        findViewById<Button>(R.id.offset_reset).setOnClickListener { NowPlaying.resetOffset() }
         findViewById<Button>(R.id.now_reload).setOnClickListener { NowPlaying.load(force = true) }
         findViewById<Button>(R.id.now_full).setOnClickListener { startActivity(Intent(this, LyricsActivity::class.java)) }
         findViewById<Button>(R.id.search_go).setOnClickListener { search() }
@@ -109,9 +109,9 @@ class MainActivity : Activity() {
         }
         if (lyrics != null) {
             val index = NowPlaying.currentIndex()
-            line.text = lyrics.lines.getOrNull(index)?.text?.ifBlank { "♪" } ?: "♪"
+            line.text = lyrics.lines.getOrNull(index)?.text?.ifBlank { Lyrics.PAUSE } ?: Lyrics.PAUSE
         }
-        findViewById<TextView>(R.id.offset_value).text = LyricsWidget.formatOffset(NowPlaying.offsetMs())
+        findViewById<TextView>(R.id.offset_value).text = LyricsWidget.formatOffset(NowPlaying.offsetMs(), NowPlaying.offsetIsAuto())
 
         // Prellenar la búsqueda con la canción nueva (ya limpia de "Remastered", "Official Video"...).
         if (prefilledKey != track.key) {

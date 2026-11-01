@@ -10,7 +10,7 @@
     <string name="widget_searching">Buscando la letra…</string>
     <string name="widget_not_found">Letra no encontrada · toca para buscarla</string>
     <string name="widget_unavailable">El servidor de letras no responde · reintentando</string>
-    <string name="widget_instrumental">♪ Instrumental ♪</string>
+    <string name="widget_instrumental">Instrumental</string>
     <string name="widget_unsynced">%1$s · aprox.</string>
     <string name="cd_offset_minus">Adelantar la letra</string>
     <string name="cd_offset_plus">Atrasar la letra</string>
@@ -18,7 +18,7 @@
     <!-- Acceso -->
     <string name="section_access">Acceso a la música</string>
     <string name="access_hint">Para saber qué suena en Spotify, YouTube Music y otras apps, Android pide el acceso a notificaciones. La app no lee ni guarda tus notificaciones: solo la canción en reproducción.</string>
-    <string name="access_ok">✓ Acceso concedido</string>
+    <string name="access_ok">Acceso concedido</string>
     <string name="access_missing">Falta conceder el acceso</string>
     <string name="access_grant">Conceder acceso</string>
 
@@ -34,7 +34,7 @@
     <string name="lyrics_unavailable">LRCLIB no responde o no hay internet. Se reintentará solo en unos segundos.</string>
     <string name="lyrics_not_found">No se encontró la letra. Prueba la búsqueda manual.</string>
     <string name="offset_label">Desfase</string>
-    <string name="offset_hint">Si la letra va adelantada, usa −; si va atrasada, +. Se guarda para cada canción.</string>
+    <string name="offset_hint">Si la letra va adelantada, usa −; si va atrasada, +. Se guarda para esta canción y la app aprende de tus ajustes: tras corregir un par de canciones en el mismo reproductor y salida de audio (p. ej. audífonos Bluetooth), las nuevas empiezan ya corregidas y se marcan como «auto».</string>
     <string name="offset_minus">−0.5 s</string>
     <string name="offset_plus">+0.5 s</string>
     <string name="offset_reset">Restablecer</string>

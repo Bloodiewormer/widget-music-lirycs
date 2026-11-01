@@ -1,5 +1,7 @@
 package com.lyricwidget.app
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
@@ -8,6 +10,7 @@ import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -80,7 +83,7 @@ class LyricsActivity : Activity() {
         }
         findViewById<View>(R.id.lyrics_offset_box).visibility =
             if (lyrics?.synced == true && NowPlaying.status == NowPlaying.Status.FOUND) View.VISIBLE else View.INVISIBLE
-        findViewById<TextView>(R.id.lyrics_offset).text = LyricsWidget.formatOffset(NowPlaying.offsetMs())
+        findViewById<TextView>(R.id.lyrics_offset).text = LyricsWidget.formatOffset(NowPlaying.offsetMs(), NowPlaying.offsetIsAuto())
 
         // Modo karaoke: la pantalla no se apaga mientras suena música con esta vista abierta.
         if (NowPlaying.isPlaying) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -123,8 +126,9 @@ class LyricsActivity : Activity() {
         container.removeAllViews()
         lyrics.lines.forEachIndexed { index, line ->
             container.addView(TextView(this).apply {
-                text = line.text.ifBlank { "♪" }
+                text = line.text.ifBlank { Lyrics.PAUSE }
                 textSize = textSp()
+                typeface = Typeface.DEFAULT_BOLD
                 setTextColor(LINE_COLOR)
                 setPadding(0, dp(8), 0, dp(8))
                 if (lyrics.synced) {
@@ -139,17 +143,40 @@ class LyricsActivity : Activity() {
 
     private fun highlight(index: Int) {
         if (index == highlighted) return
-        (container.getChildAt(highlighted) as? TextView)?.apply {
-            setTextColor(LINE_COLOR)
-            typeface = Typeface.DEFAULT
-        }
+        (container.getChildAt(highlighted) as? TextView)?.let { animateLine(it, current = false) }
         highlighted = index
         val view = container.getChildAt(index) as? TextView ?: return
-        view.setTextColor(CURRENT_COLOR)
-        view.typeface = Typeface.DEFAULT_BOLD
+        animateLine(view, current = true)
         if (SystemClock.elapsedRealtime() - userScrolledAt > FOLLOW_PAUSE_MS) {
-            view.post { scroll.smoothScrollTo(0, view.top + view.height / 2 - scroll.height / 2) }
+            view.post {
+                val target = (view.top + view.height / 2 - scroll.height / 2).coerceAtLeast(0)
+                scrollAnimator?.cancel()
+                scrollAnimator = ObjectAnimator.ofInt(scroll, "scrollY", scroll.scrollY, target).apply {
+                    duration = ANIMATION_MS
+                    interpolator = DecelerateInterpolator(1.6f)
+                    start()
+                }
+            }
         }
+    }
+
+    private var scrollAnimator: ObjectAnimator? = null
+
+    /** La línea que entra se ilumina y crece un poco; la que sale vuelve a su estado. */
+    private fun animateLine(view: TextView, current: Boolean) {
+        val from = view.currentTextColor
+        val to = if (current) CURRENT_COLOR else LINE_COLOR
+        ValueAnimator.ofArgb(from, to).apply {
+            duration = ANIMATION_MS
+            addUpdateListener { view.setTextColor(it.animatedValue as Int) }
+            start()
+        }
+        // Escala desde el borde izquierdo para que el texto no se salga por la izquierda.
+        view.pivotX = 0f
+        view.pivotY = view.height / 2f
+        val scale = if (current) CURRENT_SCALE else 1f
+        view.animate().scaleX(scale).scaleY(scale).setDuration(ANIMATION_MS)
+            .setInterpolator(DecelerateInterpolator()).start()
     }
 
     private fun textSp(): Float = prefs(this).getFloat(KEY_TEXT_SP, DEFAULT_TEXT_SP)
@@ -179,5 +206,7 @@ class LyricsActivity : Activity() {
         private const val LINE_COLOR = 0x73FFFFFF
         private const val CURRENT_COLOR = 0xFFFFFFFF.toInt()
         private const val FOLLOW_PAUSE_MS = 4_000L
+        private const val ANIMATION_MS = 450L
+        private const val CURRENT_SCALE = 1.06f
     }
 }

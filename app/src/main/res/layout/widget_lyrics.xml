@@ -97,52 +97,110 @@
                 android:src="@drawable/ic_add" />
         </LinearLayout>
 
-        <!-- Líneas de la letra; tocar abre la app (búsqueda manual, ajustes). -->
-        <LinearLayout
+        <!--
+            Líneas de la letra. Dos caras iguales: el widget escribe la línea nueva en la cara
+            oculta y pasa a ella, y el lanzador anima el cambio deslizando hacia arriba.
+            Tocar abre la letra completa (o la app si no se encontró).
+        -->
+        <ViewFlipper
             android:id="@+id/lines"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:paddingEnd="8dp">
+            android:animateFirstView="false"
+            android:inAnimation="@anim/line_in"
+            android:outAnimation="@anim/line_out">
 
-            <TextView
-                android:id="@+id/line_prev"
+            <LinearLayout
+                android:id="@+id/face_a"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="#66FFFFFF" />
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingEnd="8dp">
+    
+                <TextView
+                    android:id="@+id/prev_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#66FFFFFF" />
+    
+                <TextView
+                    android:id="@+id/current_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="#FFFFFFFF"
+                    android:textStyle="bold" />
+    
+                <TextView
+                    android:id="@+id/next_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#99FFFFFF" />
+    
+                <TextView
+                    android:id="@+id/next2_a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#66FFFFFF" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/line_current"
+            <LinearLayout
+                android:id="@+id/face_b"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textColor="#FFFFFFFF"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/line_next"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="#99FFFFFF" />
-
-            <TextView
-                android:id="@+id/line_next2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="#66FFFFFF" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingEnd="8dp">
+    
+                <TextView
+                    android:id="@+id/prev_b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#66FFFFFF" />
+    
+                <TextView
+                    android:id="@+id/current_b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="#FFFFFFFF"
+                    android:textStyle="bold" />
+    
+                <TextView
+                    android:id="@+id/next_b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#99FFFFFF" />
+    
+                <TextView
+                    android:id="@+id/next2_b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#66FFFFFF" />
+            </LinearLayout>
+        </ViewFlipper>
 
         <!-- Avance de la canción; se muestra la variante que contrasta con el fondo elegido. -->
         <ProgressBar
