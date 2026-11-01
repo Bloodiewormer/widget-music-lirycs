@@ -46,6 +46,8 @@ object NowPlaying {
         private set
     var playerIntent: PendingIntent? = null
         private set
+    private var controls: MediaController.TransportControls? = null
+
     var screenOn = true
         set(value) {
             if (field == value) return
@@ -94,6 +96,12 @@ object NowPlaying {
 
     fun currentIndex(): Int = lyrics?.indexAt(positionMs(), track?.durationMs ?: 0) ?: -1
 
+    /** Salta en el reproductor al inicio de la línea `index` (solo letras sincronizadas). */
+    fun seekToLine(index: Int) {
+        val line = lyrics?.takeIf { it.synced }?.lines?.getOrNull(index) ?: return
+        controls?.seekTo((line.timeMs - offsetMs()).coerceAtLeast(0))
+    }
+
     // ---- Entradas desde el servicio ----
 
     fun update(controller: MediaController?) {
@@ -113,6 +121,7 @@ object NowPlaying {
         )
         state = controller.playbackState
         playerIntent = controller.sessionActivity
+        controls = controller.transportControls
         if (next.key != track?.key) {
             track = next
             albumColor = dominantColor(
@@ -134,6 +143,7 @@ object NowPlaying {
         lyrics = null
         state = null
         playerIntent = null
+        controls = null
         albumColor = null
         searching = false
         unavailable = false

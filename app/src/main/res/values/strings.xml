@@ -39,6 +39,9 @@
     <string name="offset_plus">+0.5 s</string>
     <string name="offset_reset">Restablecer</string>
     <string name="now_reload">Buscar de nuevo</string>
+    <string name="now_full">Ver letra completa</string>
+    <string name="lyrics_activity">Letra</string>
+    <string name="lyrics_settings">Ajustes</string>
 
     <!-- Búsqueda manual -->
     <string name="section_search">Búsqueda manual</string>
@@ -54,6 +57,11 @@
     <string name="search_tag_plain">solo texto</string>
     <string name="search_tag_instrumental">instrumental</string>
     <string name="search_chosen">Letra asignada a la canción actual</string>
+
+    <!-- Reproductores -->
+    <string name="section_players">Reproductores</string>
+    <string name="players_hint">Desmarca las apps cuyas canciones no quieres ver en el widget (por ejemplo, videos de YouTube o podcasts).</string>
+    <string name="players_empty">Aquí aparecerán las apps de música en cuanto suene algo en ellas.</string>
 
     <!-- Apariencia -->
     <string name="section_appearance">Apariencia del widget</string>
@@ -77,6 +85,6 @@
 
     <!-- Ayuda -->
     <string name="section_help">Cómo usarla</string>
-    <string name="help_text">1. Concede el acceso a la música.\n2. Mantén presionado un espacio vacío del escritorio → Widgets → LyricWidget.\n3. Pon música: la letra avanza sola. Toca el título del widget para abrir el reproductor y la letra para venir aquí.</string>
+    <string name="help_text">1. Concede el acceso a la música.\n2. Mantén presionado un espacio vacío del escritorio → Widgets → LyricWidget.\n3. Pon música: la letra avanza sola. Toca el título del widget para abrir el reproductor y la letra para verla completa.</string>
     <string name="credits">Letras de LRCLIB (lrclib.net) y lyrics.ovh, APIs públicas y gratuitas.</string>
 </resources>

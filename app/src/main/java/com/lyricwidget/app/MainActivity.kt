@@ -12,6 +12,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -38,6 +39,7 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.offset_plus).setOnClickListener { NowPlaying.adjustOffset(NowPlaying.OFFSET_STEP_MS) }
         findViewById<Button>(R.id.offset_reset).setOnClickListener { NowPlaying.setOffset(0) }
         findViewById<Button>(R.id.now_reload).setOnClickListener { NowPlaying.load(force = true) }
+        findViewById<Button>(R.id.now_full).setOnClickListener { startActivity(Intent(this, LyricsActivity::class.java)) }
         findViewById<Button>(R.id.search_go).setOnClickListener { search() }
         findViewById<EditText>(R.id.search_title).setOnEditorActionListener { _, action, _ ->
             if (action == EditorInfo.IME_ACTION_SEARCH) search()
@@ -54,6 +56,7 @@ class MainActivity : Activity() {
         NowPlaying.addListener(onChange)
         refreshAccess()
         refreshNow()
+        refreshPlayers()
         refreshAppearance()
         refreshCache()
     }
@@ -86,6 +89,7 @@ class MainActivity : Activity() {
         visible(R.id.now_line, track != null && lyrics != null && !lyrics.instrumental)
         visible(R.id.now_lyrics, track != null)
         visible(R.id.now_reload, track != null)
+        visible(R.id.now_full, track != null && lyrics != null && !lyrics.instrumental)
         visible(R.id.offset_box, track != null && lyrics?.synced == true)
         if (track == null) {
             title.setText(R.string.now_idle)
@@ -181,6 +185,33 @@ class MainActivity : Activity() {
         }
     }
 
+    /** Una casilla por reproductor visto; marcada = se muestran sus canciones. */
+    private fun refreshPlayers() {
+        val container = findViewById<LinearLayout>(R.id.players)
+        container.removeAllViews()
+        val seen = Players.seen(this).map { it to appName(it) }.sortedBy { it.second.lowercase(Locale.ROOT) }
+        if (seen.isEmpty()) {
+            container.addView(TextView(this).apply {
+                setText(R.string.players_empty)
+                textSize = 13f
+                setTextColor(getColor(R.color.text_secondary))
+                setPadding(0, dp(8), 0, 0)
+            })
+            return
+        }
+        val ignored = Players.ignored(this)
+        for ((packageName, name) in seen) {
+            container.addView(CheckBox(this).apply {
+                text = name
+                textSize = 15f
+                setTextColor(getColor(R.color.text_primary))
+                minHeight = dp(44)
+                isChecked = packageName !in ignored
+                setOnCheckedChangeListener { _, checked -> Players.setIgnored(this@MainActivity, packageName, !checked) }
+            })
+        }
+    }
+
     private fun refreshAppearance() {
         options(
             R.id.bg_options,
@@ -270,7 +301,7 @@ class MainActivity : Activity() {
                         shape = GradientDrawable.OVAL
                         setStroke(
                             if (isSelected) dp(3) else dp(1),
-                            if (isSelected) getColor(R.color.text_primary) else 0xFFCBD5E1.toInt(),
+                            if (isSelected) getColor(R.color.text_primary) else getColor(R.color.border_strong),
                         )
                     }
                     layoutParams = LinearLayout.LayoutParams(size, size).apply { marginEnd = gap }

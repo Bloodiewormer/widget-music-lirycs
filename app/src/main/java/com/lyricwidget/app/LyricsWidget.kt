@@ -86,7 +86,12 @@ class LyricsWidget : AppWidgetProvider() {
                 context, 0, Intent(context, MainActivity::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
-            views.setOnClickPendingIntent(R.id.lines, openApp)
+            val openLyrics = PendingIntent.getActivity(
+                context, 3, Intent(context, LyricsActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+            // Con letra: verla completa. Sin ella: a la app, donde está la búsqueda manual.
+            views.setOnClickPendingIntent(R.id.lines, if (NowPlaying.status == NowPlaying.Status.FOUND) openLyrics else openApp)
             views.setOnClickPendingIntent(R.id.track, NowPlaying.playerIntent ?: openApp)
             views.setOnClickPendingIntent(R.id.offset_minus, broadcast(context, ACTION_OFFSET_MINUS, 1))
             views.setOnClickPendingIntent(R.id.offset_plus, broadcast(context, ACTION_OFFSET_PLUS, 2))

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="brand">#6D28D9</color>
+    <!-- Texto de la píldora seleccionada y acentos sobre superficies claras. -->
     <color name="brand_dark">#4C1D95</color>
+    <color name="button">#6D28D9</color>
     <color name="bg_page">#F1F5F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_alt">#F8FAFC</color>
+    <color name="surface_tonal">#F1F5F9</color>
+    <color name="chip_on">#F5F3FF</color>
+    <color name="border">#E2E8F0</color>
+    <color name="border_strong">#CBD5E1</color>
     <color name="text_primary">#0F172A</color>
     <color name="text_secondary">#475569</color>
+    <color name="text_hint">#94A3B8</color>
 </resources>

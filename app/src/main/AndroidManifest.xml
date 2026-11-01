@@ -20,6 +20,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LyricsActivity"
+            android:exported="false"
+            android:label="@string/lyrics_activity"
+            android:theme="@style/LyricsTheme" />
+
         <!--
             Igual que Pano Scrobbler: el acceso a notificaciones es lo que permite leer las sesiones
             multimedia de cualquier reproductor. Las notificaciones en sí se ignoran.

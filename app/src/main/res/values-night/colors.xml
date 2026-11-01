@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Modo oscuro del sistema (Android 10+). En versiones anteriores siempre se usa el tema claro. -->
+<resources>
+    <color name="brand">#A78BFA</color>
+    <color name="brand_dark">#DDD6FE</color>
+    <color name="button">#7C3AED</color>
+    <color name="bg_page">#0B1120</color>
+    <color name="surface">#111827</color>
+    <color name="surface_alt">#1E293B</color>
+    <color name="surface_tonal">#1E293B</color>
+    <color name="chip_on">#2E1065</color>
+    <color name="border">#1F2937</color>
+    <color name="border_strong">#334155</color>
+    <color name="text_primary">#F1F5F9</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_hint">#64748B</color>
+</resources>

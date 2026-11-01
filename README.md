@@ -47,10 +47,13 @@
 | **Widget redimensionable** | Muestra de 1 a 4 líneas según el alto que le des; calcula qué cabe para que ninguna quede cortada. Barra fina con el avance de la canción. |
 | **Reloj cuando no hay música** | Sin reproductor activo, o tras 2 minutos en pausa, el widget muestra la hora y la fecha (`TextClock`, que Android actualiza sin despertar a la app). |
 | **Ajuste de desfase** | Botones `−` / `+` en el propio widget (pasos de 0.5 s). Se guarda por canción. |
+| **Letra completa** | Toca la letra en el widget para verla entera, sobre el color de la portada, con la línea actual resaltada y centrada. Toca cualquier línea para saltar a ese momento de la canción. |
 | **Búsqueda manual** | Si no encuentra la letra o trae la equivocada, corrige artista/título en la app y elige el resultado correcto. |
 | **Caché offline** | Cada letra se descarga una sola vez y queda guardada; funciona sin internet para canciones ya escuchadas. |
 | **Limpieza de títulos** | Quita "Remastered 2011", "(Official Video)", "feat. …", "- Topic", "VEVO"… y entiende títulos de YouTube tipo "Artista - Canción". |
 | **Apariencia** | Fondo tomado del color de la **portada del álbum**, oscuro, negro OLED, cristal o claro; 18 colores para la línea actual; 4 tamaños de letra. |
+| **Ignorar reproductores** | Desmarca las apps cuyas canciones no quieres ver (videos de YouTube, podcasts…). |
+| **Tema oscuro** | La app sigue el modo oscuro del sistema (Android 10+). |
 | **Letras sin tiempos** | Si solo hay texto plano, reparte las líneas a lo largo de la canción (marcado como "aprox."). |
 | **Tolerante a fallos** | Si LRCLIB está saturado (responde 503), reintenta con consultas más simples y, si sigue caído, vuelve a intentar solo cada 30 s. |
 
@@ -114,7 +117,9 @@ app/src/main/java/com/lyricwidget/app/
 ├── LyricsRepository.kt    LRCLIB + lyrics.ovh + caché en disco (HTTP sin librerías)
 ├── LyricsWidget.kt        El widget (RemoteViews) y su ajuste al tamaño
 ├── WidgetTheme.kt         Fondos, colores y tamaños de letra
-└── MainActivity.kt        Acceso, sonando ahora, búsqueda manual, apariencia y caché
+├── Players.kt             Reproductores vistos e ignorados
+├── LyricsActivity.kt      Letra completa con la línea actual resaltada
+└── MainActivity.kt        Acceso, sonando ahora, búsqueda manual, reproductores, apariencia y caché
 ```
 
 ## Créditos
