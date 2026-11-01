@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LyricWidget</string>
+    <string name="widget_name">Letra en vivo</string>
+    <string name="widget_description">La letra de lo que suena, línea por línea</string>
+
+    <!-- Widget -->
+    <string name="widget_no_access">Toca para dar acceso a la música</string>
+    <string name="widget_idle">No hay música sonando</string>
+    <string name="widget_searching">Buscando la letra…</string>
+    <string name="widget_not_found">Letra no encontrada · toca para buscarla</string>
+    <string name="widget_unavailable">El servidor de letras no responde · reintentando</string>
+    <string name="widget_instrumental">♪ Instrumental ♪</string>
+    <string name="widget_unsynced">%1$s · aprox.</string>
+    <string name="cd_offset_minus">Adelantar la letra</string>
+    <string name="cd_offset_plus">Atrasar la letra</string>
+
+    <!-- Acceso -->
+    <string name="section_access">Acceso a la música</string>
+    <string name="access_hint">Para saber qué suena en Spotify, YouTube Music y otras apps, Android pide el acceso a notificaciones. La app no lee ni guarda tus notificaciones: solo la canción en reproducción.</string>
+    <string name="access_ok">✓ Acceso concedido</string>
+    <string name="access_missing">Falta conceder el acceso</string>
+    <string name="access_grant">Conceder acceso</string>
+
+    <!-- Sonando ahora -->
+    <string name="section_now">Sonando ahora</string>
+    <string name="now_idle">No hay música sonando. Pon una canción en cualquier reproductor.</string>
+    <string name="now_player">En %1$s</string>
+    <string name="now_paused">en pausa</string>
+    <string name="lyrics_synced">Letra sincronizada · %1$s</string>
+    <string name="lyrics_plain">Solo texto, sin tiempos (avance aproximado) · %1$s</string>
+    <string name="lyrics_instrumental">Instrumental · %1$s</string>
+    <string name="lyrics_searching">Buscando la letra…</string>
+    <string name="lyrics_unavailable">LRCLIB no responde o no hay internet. Se reintentará solo en unos segundos.</string>
+    <string name="lyrics_not_found">No se encontró la letra. Prueba la búsqueda manual.</string>
+    <string name="offset_label">Desfase</string>
+    <string name="offset_hint">Si la letra va adelantada, usa −; si va atrasada, +. Se guarda para cada canción.</string>
+    <string name="offset_minus">−0.5 s</string>
+    <string name="offset_plus">+0.5 s</string>
+    <string name="offset_reset">Restablecer</string>
+    <string name="now_reload">Buscar de nuevo</string>
+
+    <!-- Búsqueda manual -->
+    <string name="section_search">Búsqueda manual</string>
+    <string name="search_hint">Corrige el artista o el título si la letra no aparece o no es la correcta, y elige un resultado.</string>
+    <string name="search_artist">Artista</string>
+    <string name="search_title">Título</string>
+    <string name="search_go">Buscar</string>
+    <string name="search_running">Buscando…</string>
+    <string name="search_unavailable">LRCLIB no responde ahora mismo. Inténtalo de nuevo en un momento.</string>
+    <string name="search_empty">Sin resultados. Prueba con menos palabras.</string>
+    <string name="search_pick_disabled">Pon una canción para poder asignarle un resultado.</string>
+    <string name="search_tag_synced">sincronizada</string>
+    <string name="search_tag_plain">solo texto</string>
+    <string name="search_tag_instrumental">instrumental</string>
+    <string name="search_chosen">Letra asignada a la canción actual</string>
+
+    <!-- Apariencia -->
+    <string name="section_appearance">Apariencia del widget</string>
+    <string name="appearance_background">Fondo</string>
+    <string name="appearance_accent">Color de la línea actual</string>
+    <string name="appearance_size">Tamaño de letra</string>
+    <string name="bg_album">Portada</string>
+    <string name="bg_dark">Oscuro</string>
+    <string name="bg_black">Negro</string>
+    <string name="bg_glass">Cristal</string>
+    <string name="bg_light">Claro</string>
+    <string name="size_s">Pequeño</string>
+    <string name="size_m">Mediano</string>
+    <string name="size_l">Grande</string>
+    <string name="size_xl">Enorme</string>
+
+    <!-- Caché -->
+    <string name="section_cache">Letras guardadas</string>
+    <string name="cache_info">%1$d letras · %2$s. Se reutilizan sin internet.</string>
+    <string name="cache_clear">Borrar caché</string>
+
+    <!-- Ayuda -->
+    <string name="section_help">Cómo usarla</string>
+    <string name="help_text">1. Concede el acceso a la música.\n2. Mantén presionado un espacio vacío del escritorio → Widgets → LyricWidget.\n3. Pon música: la letra avanza sola. Toca el título del widget para abrir el reproductor y la letra para venir aquí.</string>
+    <string name="credits">Letras de LRCLIB (lrclib.net) y lyrics.ovh, APIs públicas y gratuitas.</string>
+</resources>
