@@ -27,6 +27,8 @@ object NowPlaying {
     const val OFFSET_STEP_MS = 500L
     private const val RETRY_DELAY_MS = 30_000L
     private const val MAX_RETRIES = 3
+    private const val PROGRESS_STEP_MS = 5_000L
+    private const val PAUSE_TO_CLOCK_MS = 2 * 60_000L
 
     private lateinit var app: Context
     private val main = Handler(Looper.getMainLooper())
@@ -46,13 +48,14 @@ object NowPlaying {
         private set
     var screenOn = true
         set(value) {
+            if (field == value) return
             field = value
-            schedule()
+            // Al encender la pantalla el widget puede estar varias líneas atrasado: redibujar ya.
+            if (value) changed() else schedule()
         }
 
     /** Aumenta con cada canción para descartar descargas que terminan tarde. */
     private var generation = 0
-    private var lastIndex = Int.MIN_VALUE
     private var searching = false
     private var unavailable = false
     private var retries = 0
@@ -214,7 +217,6 @@ object NowPlaying {
 
     /** Redibuja todo y reprograma el reloj de líneas. */
     fun changed() {
-        lastIndex = Int.MIN_VALUE
         render()
         schedule()
     }
@@ -224,27 +226,47 @@ object NowPlaying {
         listeners.toList().forEach { it() }
     }
 
-    private val tick = Runnable { schedule() }
+    private val tick = Runnable { changed() }
 
     /**
-     * En vez de consultar la posición cada X ms, duerme justo hasta que toque la siguiente línea.
+     * En vez de consultar la posición cada X ms, duerme justo hasta que toque la siguiente línea
+     * (o hasta el próximo paso de la barra de avance, cada 5 s como mucho).
      * Sin música, con la pantalla apagada o sin nadie mirando, no programa nada.
      */
     private fun schedule() {
         main.removeCallbacks(tick)
-        val words = lyrics ?: return
-        if (!isPlaying || !screenOn) return
+        val current = track ?: return
+        if (!screenOn) return
         if (listeners.isEmpty() && !LyricsWidget.hasWidgets(app)) return
-        val duration = track?.durationMs ?: 0
-        val position = positionMs()
-        val index = words.indexAt(position, duration)
-        if (index != lastIndex) {
-            lastIndex = index
-            render()
+        if (!isPlaying) {
+            // En pausa: un único aviso para pasar al reloj, no un bucle.
+            val wait = PAUSE_TO_CLOCK_MS - pausedForMs()
+            if (wait > 0) main.postDelayed(tick, wait)
+            return
         }
-        val wait = words.msUntilNext(index, position, duration) ?: return
+        val words = lyrics
+        val duration = current.durationMs
+        if (words == null && duration <= 0) return
+        val position = positionMs()
         val speed = state?.playbackSpeed?.takeIf { it > 0f } ?: 1f
-        main.postDelayed(tick, (wait / speed).toLong().coerceIn(30L, 10_000L))
+        val untilLine = words?.msUntilNext(words.indexAt(position, duration), position, duration)
+        val wait = minOf(untilLine?.let { (it / speed).toLong() } ?: PROGRESS_STEP_MS, PROGRESS_STEP_MS)
+        main.postDelayed(tick, wait.coerceAtLeast(30L))
+    }
+
+    private fun pausedForMs(): Long {
+        val since = state?.lastPositionUpdateTime?.takeIf { it > 0 } ?: return Long.MAX_VALUE
+        return SystemClock.elapsedRealtime() - since
+    }
+
+    /** Sin música, o en pausa desde hace un rato: el widget muestra el reloj. */
+    val showClock: Boolean
+        get() = track == null || (!isPlaying && pausedForMs() >= PAUSE_TO_CLOCK_MS)
+
+    /** Avance de la canción de 0 a 1000, o -1 si el reproductor no informa la duración. */
+    fun progress(): Int {
+        val duration = track?.durationMs?.takeIf { it > 0 } ?: return -1
+        return ((positionMs() - offsetMs()) * 1000 / duration).toInt().coerceIn(0, 1000)
     }
 
     /** Color promedio de la portada, oscurecido para que el texto blanco se lea encima. */

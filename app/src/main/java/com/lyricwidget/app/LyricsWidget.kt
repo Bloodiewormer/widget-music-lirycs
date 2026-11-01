@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
@@ -90,6 +91,22 @@ class LyricsWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.offset_minus, broadcast(context, ACTION_OFFSET_MINUS, 1))
             views.setOnClickPendingIntent(R.id.offset_plus, broadcast(context, ACTION_OFFSET_PLUS, 2))
 
+            val clock = NowPlaying.showClock && NowPlaying.status != NowPlaying.Status.NO_ACCESS
+            views.setViewVisibility(R.id.clock_box, if (clock) View.VISIBLE else View.GONE)
+            views.setViewVisibility(R.id.lyrics_box, if (clock) View.GONE else View.VISIBLE)
+            if (clock) {
+                views.setTextColor(R.id.clock_time, fg)
+                views.setTextColor(R.id.clock_date, withAlpha(fg, 0xB3))
+                views.setOnClickPendingIntent(R.id.clock_box, openApp)
+                return views
+            }
+
+            val progress = NowPlaying.progress()
+            val lightBar = fg == Color.WHITE
+            views.setViewVisibility(R.id.progress_light, if (progress >= 0 && lightBar) View.VISIBLE else View.GONE)
+            views.setViewVisibility(R.id.progress_dark, if (progress >= 0 && !lightBar) View.VISIBLE else View.GONE)
+            views.setProgressBar(if (lightBar) R.id.progress_light else R.id.progress_dark, 1000, progress.coerceAtLeast(0), false)
+
             val track = NowPlaying.track
             val lyrics = NowPlaying.lyrics
             views.setTextViewText(R.id.track, track?.label ?: context.getString(R.string.app_name))
@@ -153,7 +170,7 @@ class LyricsWidget : AppWidgetProvider() {
             val scale = config.fontScale * 1.25f // alto de una fila de texto ≈ 1.25 × tamaño de letra
             val line = sp * scale
             val current = sp * 1.3f * scale
-            var room = height - 56f - current - 8f // cabecera 36dp + padding 20dp; márgenes de la actual 8dp
+            var room = height - 67f - current - 8f // cabecera 36dp + padding 20dp + barra 11dp; márgenes de la actual 8dp
             fun take(size: Float): Boolean = (room >= size).also { if (it) room -= size }
             val next = take(line)
             val prev = take(line)
