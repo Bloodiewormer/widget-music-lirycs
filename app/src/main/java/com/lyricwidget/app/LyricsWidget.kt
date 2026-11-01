@@ -9,6 +9,9 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Typeface
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.SizeF
@@ -25,7 +28,7 @@ class LyricsWidget : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
         NowPlaying.init(context)
-        updateAll(context)
+        updateAll(context, forceFull = true)
     }
 
     override fun onAppWidgetOptionsChanged(context: Context, manager: AppWidgetManager, id: Int, options: Bundle) {
@@ -70,12 +73,37 @@ class LyricsWidget : AppWidgetProvider() {
          */
         private var face = 0
         private var faceContent: String? = null
+        private var lineContent: String? = null
         private var lastFlipAt = 0L
+        private var lastProgress = -1
 
-        fun updateAll(context: Context) {
-            val content = "${NowPlaying.track?.key}|${NowPlaying.status}|${System.identityHashCode(NowPlaying.lyrics)}|${NowPlaying.currentIndex()}"
+        fun updateAll(context: Context, forceFull: Boolean = false) {
+            val currentLine = "${NowPlaying.track?.key}|${NowPlaying.status}|" +
+                "${System.identityHashCode(NowPlaying.lyrics)}|${NowPlaying.currentIndex()}"
+            val content = "$currentLine|${NowPlaying.track?.label}|" +
+                "${NowPlaying.showClock}|${NowPlaying.albumColor}|${NowPlaying.offsetMs()}|${NowPlaying.offsetIsAuto()}"
+            val manager = AppWidgetManager.getInstance(context)
+            val widgetIds = ids(context)
+            if (widgetIds.isEmpty()) return
+            val progress = NowPlaying.progress()
+            if (!forceFull && content == faceContent) {
+                // La barra cambia cada pocos segundos. Actualizar solo esa vista evita reiniciar el
+                // ViewFlipper y recalcular el texto en launchers lentos (especialmente Android 8).
+                if (progress != lastProgress && progress >= 0 && WidgetTheme.showProgress(context) && !NowPlaying.showClock) {
+                    val light = WidgetTheme.background(context).foreground == Color.WHITE
+                    val views = RemoteViews(context.packageName, R.layout.widget_lyrics)
+                    views.setProgressBar(if (light) R.id.progress_light else R.id.progress_dark, 1000, progress, false)
+                    manager.partiallyUpdateAppWidget(widgetIds, views)
+                }
+                lastProgress = progress
+                return
+            }
+            lastProgress = progress
             if (content != faceContent) {
                 faceContent = content
+            }
+            if (currentLine != lineContent) {
+                lineContent = currentLine
                 // Animar solo si hay tiempo: si la línea es más corta que la animación, o la
                 // anterior todavía no termina, cambiar al instante en la misma cara. Así una parte
                 // rápida de la canción no corta la transición a la mitad.
@@ -87,8 +115,7 @@ class LyricsWidget : AppWidgetProvider() {
                     lastFlipAt = now
                 }
             }
-            val manager = AppWidgetManager.getInstance(context)
-            for (id in ids(context)) manager.updateAppWidget(id, build(context, manager.getAppWidgetOptions(id)))
+            for (id in widgetIds) manager.updateAppWidget(id, build(context, manager.getAppWidgetOptions(id)))
         }
 
         private fun build(context: Context, options: Bundle?): RemoteViews {
@@ -106,14 +133,6 @@ class LyricsWidget : AppWidgetProvider() {
             views.setTextColor(currentId, WidgetTheme.currentLineColor(context))
             views.setTextColor(nextId, withAlpha(fg, 0x99))
             views.setTextColor(next2Id, withAlpha(fg, 0x66))
-
-            val sp = WidgetTheme.textSp(context)
-            views.setTextViewTextSize(prevId, TypedValue.COMPLEX_UNIT_SP, sp)
-            views.setTextViewTextSize(currentId, TypedValue.COMPLEX_UNIT_SP, sp * 1.3f)
-            views.setTextViewTextSize(nextId, TypedValue.COMPLEX_UNIT_SP, sp)
-            views.setTextViewTextSize(next2Id, TypedValue.COMPLEX_UNIT_SP, sp)
-
-            val fit = fitLines(context, options, sp)
 
             val openApp = PendingIntent.getActivity(
                 context, 0, Intent(context, MainActivity::class.java),
@@ -141,8 +160,6 @@ class LyricsWidget : AppWidgetProvider() {
 
             val progress = NowPlaying.progress()
             val lightBar = fg == Color.WHITE
-            views.setViewVisibility(R.id.progress_light, if (progress >= 0 && lightBar) View.VISIBLE else View.GONE)
-            views.setViewVisibility(R.id.progress_dark, if (progress >= 0 && !lightBar) View.VISIBLE else View.GONE)
             views.setProgressBar(if (lightBar) R.id.progress_light else R.id.progress_dark, 1000, progress.coerceAtLeast(0), false)
             if (Device.modern) {
                 // Android 12+: la barra toma el color de acento en vez de blanco o gris fijo.
@@ -157,7 +174,8 @@ class LyricsWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.track, track?.label ?: context.getString(R.string.app_name))
 
             val synced = lyrics?.synced == true && NowPlaying.status == NowPlaying.Status.FOUND
-            val offsetVisibility = if (synced) View.VISIBLE else View.GONE
+            val showOffset = synced && WidgetTheme.showOffset(context)
+            val offsetVisibility = if (showOffset) View.VISIBLE else View.GONE
             views.setViewVisibility(R.id.offset_minus, offsetVisibility)
             views.setViewVisibility(R.id.offset, offsetVisibility)
             views.setViewVisibility(R.id.offset_plus, offsetVisibility)
@@ -171,21 +189,34 @@ class LyricsWidget : AppWidgetProvider() {
                 NowPlaying.Status.UNAVAILABLE -> R.string.widget_unavailable
                 NowPlaying.Status.FOUND -> if (lyrics?.instrumental == true) R.string.widget_instrumental else 0
             }
+            val index = NowPlaying.currentIndex()
+            fun line(i: Int): String = lyrics?.lines?.getOrNull(i)?.text?.ifBlank { Lyrics.PAUSE } ?: ""
+            val currentText = if (message != 0 || lyrics == null) {
+                context.getString(if (message != 0) message else R.string.widget_not_found)
+            } else if (index < 0) Lyrics.PAUSE else line(index)
+            val fit = fitLines(context, options, WidgetTheme.textSp(context), currentText,
+                WidgetTheme.showTitle(context) || showOffset, WidgetTheme.showProgress(context) && progress >= 0)
+            views.setViewVisibility(R.id.header, if (fit.header) View.VISIBLE else View.GONE)
+            views.setViewVisibility(R.id.track, if (WidgetTheme.showTitle(context)) View.VISIBLE else View.INVISIBLE)
+            views.setViewVisibility(R.id.progress_light, if (fit.progress && lightBar) View.VISIBLE else View.GONE)
+            views.setViewVisibility(R.id.progress_dark, if (fit.progress && !lightBar) View.VISIBLE else View.GONE)
+            val sp = WidgetTheme.textSp(context)
+            views.setTextViewTextSize(prevId, TypedValue.COMPLEX_UNIT_SP, sp)
+            views.setTextViewTextSize(currentId, TypedValue.COMPLEX_UNIT_SP, fit.currentSp)
+            views.setTextViewTextSize(nextId, TypedValue.COMPLEX_UNIT_SP, sp)
+            views.setTextViewTextSize(next2Id, TypedValue.COMPLEX_UNIT_SP, sp)
+            views.setInt(currentId, "setMaxLines", fit.currentLines)
+            views.setTextViewText(currentId, currentText)
             if (message != 0 || lyrics == null) {
                 views.setViewVisibility(prevId, View.GONE)
                 views.setViewVisibility(nextId, View.GONE)
                 views.setViewVisibility(next2Id, View.GONE)
                 views.setViewVisibility(currentId, View.VISIBLE)
-                views.setTextViewText(currentId, context.getString(message))
             } else {
-                val index = NowPlaying.currentIndex()
-                fun line(i: Int): String = lyrics.lines.getOrNull(i)?.text?.ifBlank { Lyrics.PAUSE } ?: ""
                 views.setTextViewText(prevId, line(index - 1))
-                views.setTextViewText(currentId, if (index < 0) Lyrics.PAUSE else line(index))
                 views.setTextViewText(nextId, line(index + 1))
                 views.setTextViewText(next2Id, line(index + 2))
                 views.setViewVisibility(currentId, View.VISIBLE)
-                views.setInt(currentId, "setMaxLines", fit.currentLines)
                 views.setViewVisibility(prevId, if (fit.prev) View.VISIBLE else View.GONE)
                 views.setViewVisibility(nextId, if (fit.next) View.VISIBLE else View.GONE)
                 views.setViewVisibility(next2Id, if (fit.next2) View.VISIBLE else View.GONE)
@@ -199,38 +230,72 @@ class LyricsWidget : AppWidgetProvider() {
         }
 
 
-        private class Fit(val currentLines: Int, val prev: Boolean, val next: Boolean, val next2: Boolean)
+        private class Fit(
+            val currentSp: Float, val currentLines: Int,
+            val prev: Boolean, val next: Boolean, val next2: Boolean,
+            val header: Boolean, val progress: Boolean,
+        )
 
-        /**
-         * Decide qué líneas mostrar según la altura real del widget, para que ninguna quede cortada.
-         * Prioridad: actual, siguiente, anterior, la de después, y por último una segunda fila para
-         * la actual. En horizontal Android reporta la altura en MIN_HEIGHT; en vertical, en MAX_HEIGHT.
-         */
-        private fun fitLines(context: Context, options: Bundle?, sp: Float): Fit {
-            val config = context.resources.configuration
-            val landscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE
+        /** La línea actual ocupa primero las filas que necesita; las vecinas usan el espacio restante. */
+        private fun fitLines(
+            context: Context, options: Bundle?, sp: Float, text: String,
+            wantHeader: Boolean, wantProgress: Boolean,
+        ): Fit {
+            val landscape = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
             val legacyHeight = options?.getInt(
                 if (landscape) AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT else AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT,
             ) ?: 0
-            // Android 12+ informa todos los tamaños posibles del widget; se usa el más bajo para que
-            // nada quede cortado en ninguna orientación.
+            val legacyWidth = options?.getInt(
+                if (landscape) AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH else AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
+            ) ?: 0
+            // El menor tamaño que reporta el launcher evita desbordes al rotar o redimensionar.
             @Suppress("DEPRECATION")
-            val modernHeight = if (Device.modern) {
-                options?.getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)?.minOfOrNull { it.height }?.toInt()
+            val sizes = if (Device.modern) {
+                options?.getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)
             } else null
-            val height = modernHeight ?: legacyHeight
-            if (height <= 0) return Fit(2, prev = true, next = true, next2 = false)
+            val height = sizes?.minOfOrNull { it.height } ?: legacyHeight.takeIf { it > 0 }?.toFloat() ?: 110f
+            val width = sizes?.minOfOrNull { it.width } ?: legacyWidth.takeIf { it > 0 }?.toFloat() ?: 250f
+            // En widgets muy bajos, cabecera y barra ceden el sitio a la letra.
+            val header = wantHeader && height >= 100f
+            val progress = wantProgress && height >= 90f
+            val density = context.resources.displayMetrics.density
+            val textWidth = ((width - 32f) * density).toInt().coerceAtLeast(1)
+            val available = (height - 20f - (if (header) 36f else 0f) -
+                (if (progress) 11f else 0f) - 8f - 4f).coerceAtLeast(0f)
 
-            val scale = config.fontScale * 1.25f // alto de una fila de texto ≈ 1.25 × tamaño de letra
-            val line = sp * scale
-            val current = sp * 1.3f * scale
-            var room = height - 67f - current - 8f // cabecera 36dp + padding 20dp + barra 11dp; márgenes de la actual 8dp
-            fun take(size: Float): Boolean = (room >= size).also { if (it) room -= size }
-            val next = take(line)
-            val prev = take(line)
-            val next2 = take(line + 2f)
-            val twoRows = take(current)
-            return Fit(if (twoRows) 2 else 1, prev, next, next2)
+            fun paint(size: Float) = TextPaint().apply {
+                textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, context.resources.displayMetrics)
+                typeface = Typeface.DEFAULT_BOLD
+                isAntiAlias = true
+            }
+            fun rowHeight(size: Float): Float {
+                val metrics = paint(size).fontMetrics
+                return (metrics.descent - metrics.ascent) / density + 2f
+            }
+            fun wrappedLines(size: Float): Int {
+                val value = text.ifEmpty { " " }
+                return StaticLayout.Builder.obtain(value, 0, value.length, paint(size), textWidth)
+                    .setIncludePad(false).build().lineCount.coerceAtLeast(1)
+            }
+            // Reducir un poco el tamaño solo si la frase no cabe completa; nunca reducir las demás.
+            val sizesToTry = floatArrayOf(sp * 1.3f, sp * 1.2f, sp * 1.1f, sp, sp * 0.9f)
+            val chosen = sizesToTry.firstOrNull { wrappedLines(it) * rowHeight(it) <= available }
+                ?: sizesToTry.last()
+            val currentRows = wrappedLines(chosen).coerceAtMost(
+                (available / rowHeight(chosen)).toInt().coerceAtLeast(1),
+            )
+            var remaining = available - currentRows * rowHeight(chosen)
+            fun take(extra: Float = 0f): Boolean {
+                val cost = rowHeight(sp) + extra
+                if (remaining < cost) return false
+                remaining -= cost
+                return true
+            }
+            val contextLines = WidgetTheme.contextLines(context)
+            val next = contextLines >= 1 && take()
+            val prev = contextLines >= 2 && take()
+            val next2 = contextLines >= 3 && take(2f)
+            return Fit(chosen, currentRows, prev, next, next2, header, progress)
         }
 
         /** "auto" marca un desfase aprendido de tus ajustes anteriores, no uno elegido para esta canción. */

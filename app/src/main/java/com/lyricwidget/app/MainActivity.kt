@@ -236,6 +236,25 @@ class MainActivity : Activity() {
             WidgetTheme.setTextSizeIndex(this, it)
             refreshAppearance()
         }
+        options(
+            R.id.context_options,
+            intArrayOf(R.string.context_0, R.string.context_1, R.string.context_2, R.string.context_3),
+            WidgetTheme.contextLines(this),
+        ) {
+            WidgetTheme.setContextLines(this, it)
+            refreshAppearance()
+        }
+        appearanceToggle(R.id.show_offset, WidgetTheme.showOffset(this), WidgetTheme::setShowOffset)
+        appearanceToggle(R.id.show_title, WidgetTheme.showTitle(this), WidgetTheme::setShowTitle)
+        appearanceToggle(R.id.show_progress, WidgetTheme.showProgress(this), WidgetTheme::setShowProgress)
+    }
+
+    private fun appearanceToggle(id: Int, checked: Boolean, save: (android.content.Context, Boolean) -> Unit) {
+        findViewById<CheckBox>(id).apply {
+            setOnCheckedChangeListener(null)
+            isChecked = checked
+            setOnCheckedChangeListener { _, value -> save(this@MainActivity, value) }
+        }
     }
 
     private fun refreshCache() {

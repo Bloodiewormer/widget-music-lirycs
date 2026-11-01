@@ -9,6 +9,10 @@ object WidgetTheme {
     private const val KEY_ACCENT = "accent"
     private const val KEY_BACKGROUND = "background"
     private const val KEY_TEXT_SIZE = "text_size"
+    private const val KEY_SHOW_OFFSET = "show_offset"
+    private const val KEY_SHOW_TITLE = "show_title"
+    private const val KEY_SHOW_PROGRESS = "show_progress"
+    private const val KEY_CONTEXT = "context_lines"
 
     val ACCENTS = intArrayOf(
         Color.WHITE,
@@ -54,7 +58,7 @@ object WidgetTheme {
 
     fun setAccent(context: Context, color: Int) {
         prefs(context).edit().putInt(KEY_ACCENT, color).apply()
-        LyricsWidget.updateAll(context)
+        LyricsWidget.updateAll(context, forceFull = true)
     }
 
     fun backgroundIndex(context: Context): Int =
@@ -62,7 +66,7 @@ object WidgetTheme {
 
     fun setBackgroundIndex(context: Context, index: Int) {
         prefs(context).edit().putInt(KEY_BACKGROUND, index).apply()
-        LyricsWidget.updateAll(context)
+        LyricsWidget.updateAll(context, forceFull = true)
     }
 
     fun textSizeIndex(context: Context): Int =
@@ -70,10 +74,29 @@ object WidgetTheme {
 
     fun setTextSizeIndex(context: Context, index: Int) {
         prefs(context).edit().putInt(KEY_TEXT_SIZE, index).apply()
-        LyricsWidget.updateAll(context)
+        LyricsWidget.updateAll(context, forceFull = true)
     }
 
     fun textSp(context: Context): Float = TEXT_SP[textSizeIndex(context)]
+
+    fun showOffset(context: Context): Boolean = prefs(context).getBoolean(KEY_SHOW_OFFSET, true)
+    fun showTitle(context: Context): Boolean = prefs(context).getBoolean(KEY_SHOW_TITLE, true)
+    fun showProgress(context: Context): Boolean = prefs(context).getBoolean(KEY_SHOW_PROGRESS, true)
+    fun contextLines(context: Context): Int = prefs(context).getInt(KEY_CONTEXT, 3).coerceIn(0, 3)
+
+    fun setShowOffset(context: Context, show: Boolean) = setBoolean(context, KEY_SHOW_OFFSET, show)
+    fun setShowTitle(context: Context, show: Boolean) = setBoolean(context, KEY_SHOW_TITLE, show)
+    fun setShowProgress(context: Context, show: Boolean) = setBoolean(context, KEY_SHOW_PROGRESS, show)
+
+    fun setContextLines(context: Context, count: Int) {
+        prefs(context).edit().putInt(KEY_CONTEXT, count.coerceIn(0, 3)).apply()
+        LyricsWidget.updateAll(context, forceFull = true)
+    }
+
+    private fun setBoolean(context: Context, key: String, value: Boolean) {
+        prefs(context).edit().putBoolean(key, value).apply()
+        LyricsWidget.updateAll(context, forceFull = true)
+    }
 
     /** Color de fondo efectivo: con "Portada" y sin carátula disponible se usa el oscuro. */
     fun backgroundColor(context: Context): Int {
