@@ -10,9 +10,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
+    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.0-6D28D9?logo=android&logoColor=white">
+  </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
-  <img alt="APK ~71 KB" src="https://img.shields.io/badge/APK-~71%20KB-6D28D9">
+  <img alt="APK ~72 KB" src="https://img.shields.io/badge/APK-~72%20KB-6D28D9">
   <img alt="Sin backend" src="https://img.shields.io/badge/backend-ninguno-0F172A">
 </p>
 
@@ -28,6 +31,7 @@
 │  LÍNEA ACTUAL, EN GRANDE Y CON COLOR                     │
 │  línea siguiente                                         │
 │  la que viene después                                    │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━──────────────────────── │
 ╰──────────────────────────────────────────────────────────╯
                      Letra en vivo (4×2, redimensionable)
 ```
@@ -40,7 +44,8 @@
 
 | Función | Detalle |
 |---|---|
-| **Widget redimensionable** | Muestra de 1 a 4 líneas según el alto que le des; calcula qué cabe para que ninguna quede cortada. |
+| **Widget redimensionable** | Muestra de 1 a 4 líneas según el alto que le des; calcula qué cabe para que ninguna quede cortada. Barra fina con el avance de la canción. |
+| **Reloj cuando no hay música** | Sin reproductor activo, o tras 2 minutos en pausa, el widget muestra la hora y la fecha (`TextClock`, que Android actualiza sin despertar a la app). |
 | **Ajuste de desfase** | Botones `−` / `+` en el propio widget (pasos de 0.5 s). Se guarda por canción. |
 | **Búsqueda manual** | Si no encuentra la letra o trae la equivocada, corrige artista/título en la app y elige el resultado correcto. |
 | **Caché offline** | Cada letra se descarga una sola vez y queda guardada; funciona sin internet para canciones ya escuchadas. |
@@ -53,6 +58,7 @@
 
 - El widget **no se actualiza por temporizador** (`updatePeriodMillis = 0`).
 - En lugar de consultar la posición cada X ms, la app calcula cuánto falta para la siguiente línea y **duerme exactamente ese tiempo**.
+- La barra de avance se refresca como mucho cada 5 s, aprovechando los mismos despertares de las líneas.
 - Con la música en pausa, la pantalla apagada o sin widgets en el escritorio, **no corre ningún reloj**.
 - No hay red salvo al cambiar de canción (y solo si la letra no está en caché).
 
@@ -64,7 +70,17 @@ Igual que [Pano Scrobbler](https://github.com/kawaiiDango/pano-scrobbler): Andro
 
 ## Instalación
 
-### Opción A: compilar e instalar por USB
+### Opción A: descargar el APK (recomendado)
+
+👉 **[Descargar LyricWidget-v1.0.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.0.apk)**
+
+Ábrelo en el teléfono (permitiendo instalar apps desconocidas) o instálalo por USB:
+
+```bash
+adb install -r LyricWidget-v1.0.apk
+```
+
+### Opción B: compilar desde el código fuente
 
 **Requisitos:** JDK 17+ y Android SDK con `platform-tools`.
 

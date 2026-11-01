@@ -11,7 +11,39 @@
         android:scaleType="fitXY"
         android:src="@drawable/panel_bg" />
 
+    <!-- Sin música: reloj y fecha. TextClock se actualiza solo, sin despertar a la app. -->
     <LinearLayout
+        android:id="@+id/clock_box"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextClock
+            android:id="@+id/clock_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:format12Hour="h:mm"
+            android:format24Hour="HH:mm"
+            android:includeFontPadding="false"
+            android:textColor="#FFFFFFFF"
+            android:textSize="44sp" />
+
+        <TextClock
+            android:id="@+id/clock_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:format12Hour="EEEE, d 'de' MMMM"
+            android:format24Hour="EEEE, d 'de' MMMM"
+            android:textColor="#B3FFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyrics_box"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -111,5 +143,27 @@
                 android:maxLines="1"
                 android:textColor="#66FFFFFF" />
         </LinearLayout>
+
+        <!-- Avance de la canción; se muestra la variante que contrasta con el fondo elegido. -->
+        <ProgressBar
+            android:id="@+id/progress_light"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:max="1000"
+            android:progressDrawable="@drawable/progress_light" />
+
+        <ProgressBar
+            android:id="@+id/progress_dark"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:max="1000"
+            android:progressDrawable="@drawable/progress_dark"
+            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>
