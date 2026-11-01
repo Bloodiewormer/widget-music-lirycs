@@ -44,7 +44,7 @@
 
 | Función | Detalle |
 |---|---|
-| **Widget redimensionable** | Da prioridad a la línea actual: si es larga, ocupa varias filas y ceden las líneas vecinas. Ajusta un poco su tamaño si hace falta. Barra fina con el avance de la canción. |
+| **Widget redimensionable** | En equipos modernos da prioridad a la línea actual: si es larga, ocupa varias filas y ceden las líneas vecinas. En Android 8 conserva la distribución ligera de la v1.2. Barra fina con el avance de la canción. |
 | **Reloj cuando no hay música** | Sin reproductor activo, o tras 2 minutos en pausa, el widget muestra la hora y la fecha (`TextClock`, que Android actualiza sin despertar a la app). |
 | **Ajuste de desfase** | Botones `−` / `+` en el propio widget (pasos de 0.5 s), guardados por canción. La app aprende de tus correcciones: tras ajustar un par de canciones con el mismo reproductor y salida de audio (por ejemplo, audífonos Bluetooth), las canciones nuevas empiezan ya corregidas y se marcan como "auto". |
 | **Animación suave** | En el widget la línea nueva entra mientras la anterior se desvanece; en la letra completa la línea actual se ilumina y se centra. Si una parte de la canción es más corta que la animación, el cambio es instantáneo en lugar de quedar cortado. Respeta la opción del sistema que desactiva animaciones. |
@@ -63,13 +63,13 @@
 
 | | Android 8 o gama baja | Android 9 a 11 | Android 12 o superior |
 |---|---|---|---|
-| Cambio de línea en el widget | Fundido corto (220 ms) | Deslizamiento con fundido (340 ms) | Deslizamiento con fundido (340 ms) |
+| Cambio de línea en el widget | Deslizamiento con fundido de la v1.2 (380 ms) | Deslizamiento con fundido (340 ms) | Deslizamiento con fundido (340 ms) |
 | Letra completa | Solo cambio de color, más rápido | Color y escala | Color y escala |
 | Fondo de la letra completa | Color promedio de la portada | Color promedio de la portada | Portada difuminada (blur nativo) |
 | Fondo del widget | Portada, oscuro, negro, cristal, claro | Igual | Además «Sistema» (Material You) |
 | Barra de avance | Blanca o gris | Blanca o gris | Color de acento |
 | Esquinas del widget | 24 dp | 24 dp | Las del sistema |
-| Líneas visibles | Estimadas por la altura del widget | Igual | Calculadas con los tamaños exactos que informa el lanzador |
+| Líneas visibles | Distribución ligera de la v1.2 | Ajustadas a la línea actual | Ajustadas a la línea actual con los tamaños exactos que informa el lanzador |
 
 ## Cero impacto en batería
 

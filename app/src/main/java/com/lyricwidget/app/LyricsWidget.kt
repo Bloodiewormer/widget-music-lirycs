@@ -104,12 +104,12 @@ class LyricsWidget : AppWidgetProvider() {
             }
             if (currentLine != lineContent) {
                 lineContent = currentLine
-                // Animar solo si hay tiempo: si la línea es más corta que la animación, o la
-                // anterior todavía no termina, cambiar al instante en la misma cara. Así una parte
-                // rápida de la canción no corta la transición a la mitad.
+                // Android 8 conserva el cambio de cara de v1.2. En equipos nuevos se omite la
+                // animación cuando una frase es demasiado corta para terminarla sin corte.
                 val now = SystemClock.elapsedRealtime()
                 val animation = Device.widgetAnimationMs
-                val room = NowPlaying.currentLineDurationMs() >= animation * 2 && now - lastFlipAt >= animation + 60
+                val room = Device.lite(context) ||
+                    (NowPlaying.currentLineDurationMs() >= animation * 2 && now - lastFlipAt >= animation + 60)
                 if (Device.animationsEnabled && room) {
                     face = 1 - face
                     lastFlipAt = now
@@ -258,6 +258,22 @@ class LyricsWidget : AppWidgetProvider() {
             // En widgets muy bajos, cabecera y barra ceden el sitio a la letra.
             val header = wantHeader && height >= 100f
             val progress = wantProgress && height >= 90f
+            if (Device.lite(context)) {
+                // La v1.2 mantenía el mismo tamaño y distribución al cambiar de línea.
+                // Evitar medir cada frase conserva esa transición en Android 8 y poca RAM.
+                val scale = context.resources.configuration.fontScale * 1.25f
+                val lineHeight = sp * scale
+                val currentHeight = sp * 1.3f * scale
+                var room = height - 20f - (if (header) 36f else 0f) -
+                    (if (progress) 11f else 0f) - currentHeight - 8f
+                fun take(cost: Float): Boolean = (room >= cost).also { if (it) room -= cost }
+                val contextLines = WidgetTheme.contextLines(context)
+                val next = contextLines >= 1 && take(lineHeight)
+                val prev = contextLines >= 2 && take(lineHeight)
+                val next2 = contextLines >= 3 && take(lineHeight + 2f)
+                val currentLines = if (take(currentHeight)) 2 else 1
+                return Fit(sp * 1.3f, currentLines, prev, next, next2, header, progress)
+            }
             val density = context.resources.displayMetrics.density
             val textWidth = ((width - 32f) * density).toInt().coerceAtLeast(1)
             val available = (height - 20f - (if (header) 36f else 0f) -
