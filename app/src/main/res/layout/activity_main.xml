@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        android:padding="16dp">
+
+        <!-- Acceso -->
+        <LinearLayout
+            android:id="@+id/card_access"
+            style="@style/Card">
+
+            <TextView
+                style="@style/Section"
+                android:text="@string/section_access" />
+
+            <TextView
+                android:id="@+id/access_status"
+                style="@style/Label" />
+
+            <TextView
+                style="@style/Hint"
+                android:text="@string/access_hint" />
+
+            <Button
+                android:id="@+id/access_grant"
+                style="@style/BtnPrimary"
+                android:layout_marginTop="14dp"
+                android:text="@string/access_grant" />
+        </LinearLayout>
+
+        <!-- Sonando ahora -->
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                style="@style/Section"
+                android:text="@string/section_now" />
+
+            <TextView
+                android:id="@+id/now_title"
+                style="@style/Label" />
+
+            <TextView
+                android:id="@+id/now_meta"
+                style="@style/Hint" />
+
+            <TextView
+                android:id="@+id/now_line"
+                style="@style/Preview" />
+
+            <TextView
+                android:id="@+id/now_lyrics"
+                style="@style/Hint"
+                android:layout_marginTop="10dp" />
+
+            <LinearLayout
+                android:id="@+id/offset_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Label"
+                    android:text="@string/offset_label" />
+
+                <TextView
+                    style="@style/Hint"
+                    android:text="@string/offset_hint" />
+
+                <LinearLayout style="@style/Options">
+
+                    <Button
+                        android:id="@+id/offset_minus"
+                        style="@style/BtnTonal"
+                        android:text="@string/offset_minus" />
+
+                    <TextView
+                        android:id="@+id/offset_value"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/offset_plus"
+                        style="@style/BtnTonal"
+                        android:text="@string/offset_plus" />
+
+                    <Button
+                        android:id="@+id/offset_reset"
+                        style="@style/BtnTonal"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/offset_reset" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/now_reload"
+                style="@style/BtnTonal"
+                android:layout_marginTop="14dp"
+                android:text="@string/now_reload" />
+        </LinearLayout>
+
+        <!-- Búsqueda manual -->
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                style="@style/Section"
+                android:text="@string/section_search" />
+
+            <TextView
+                style="@style/Hint"
+                android:text="@string/search_hint" />
+
+            <EditText
+                android:id="@+id/search_artist"
+                style="@style/Field"
+                android:hint="@string/search_artist"
+                android:imeOptions="actionNext" />
+
+            <EditText
+                android:id="@+id/search_title"
+                style="@style/Field"
+                android:hint="@string/search_title" />
+
+            <Button
+                android:id="@+id/search_go"
+                style="@style/BtnPrimary"
+                android:layout_marginTop="12dp"
+                android:text="@string/search_go" />
+
+            <TextView
+                android:id="@+id/search_status"
+                style="@style/Hint"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/search_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
+
+        <!-- Apariencia -->
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                style="@style/Section"
+                android:text="@string/section_appearance" />
+
+            <TextView
+                style="@style/Label"
+                android:text="@string/appearance_background" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/bg_options"
+                    style="@style/Options"
+                    android:layout_width="wrap_content" />
+            </HorizontalScrollView>
+
+            <TextView
+                style="@style/Label"
+                android:text="@string/appearance_accent" />
+
+            <LinearLayout
+                android:id="@+id/accent"
+                style="@style/Options" />
+
+            <TextView
+                style="@style/Label"
+                android:text="@string/appearance_size" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/size_options"
+                    style="@style/Options"
+                    android:layout_width="wrap_content" />
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <!-- Caché -->
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                style="@style/Section"
+                android:text="@string/section_cache" />
+
+            <TextView
+                android:id="@+id/cache_info"
+                style="@style/Hint" />
+
+            <Button
+                android:id="@+id/cache_clear"
+                style="@style/BtnTonal"
+                android:layout_marginTop="14dp"
+                android:text="@string/cache_clear" />
+        </LinearLayout>
+
+        <!-- Ayuda -->
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                style="@style/Section"
+                android:text="@string/section_help" />
+
+            <TextView
+                style="@style/Hint"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/help_text" />
+
+            <TextView
+                style="@style/Hint"
+                android:layout_marginTop="12dp"
+                android:text="@string/credits" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
