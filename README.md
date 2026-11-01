@@ -15,7 +15,7 @@
   </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
-  <img alt="APK ~72 KB" src="https://img.shields.io/badge/APK-~72%20KB-6D28D9">
+  <img alt="APK ~73 KB" src="https://img.shields.io/badge/APK-~73%20KB-6D28D9">
   <img alt="Sin backend" src="https://img.shields.io/badge/backend-ninguno-0F172A">
 </p>
 
