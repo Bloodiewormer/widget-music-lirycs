@@ -7,6 +7,23 @@
         <item name="android:windowBackground">@color/bg_page</item>
     </style>
 
+    <!-- Letra completa: siempre oscura, el fondo lo pinta la actividad con el color de la portada. -->
+    <style name="LyricsTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#FF111827</item>
+        <item name="android:statusBarColor">#33000000</item>
+        <item name="android:navigationBarColor">#FF000000</item>
+    </style>
+
+    <style name="LyricsBarButton" parent="android:Widget.Material.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:minWidth">52dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="Card">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -63,7 +80,7 @@
         <item name="android:imeOptions">actionSearch</item>
         <item name="android:maxLines">1</item>
         <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textColorHint">#FF94A3B8</item>
+        <item name="android:textColorHint">@color/text_hint</item>
         <item name="android:textSize">15sp</item>
     </style>
 

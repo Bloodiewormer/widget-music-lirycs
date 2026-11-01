@@ -83,7 +83,10 @@
 
                     <TextView
                         android:id="@+id/offset_value"
-                        android:layout_width="72dp"
+                        android:layout_width="wrap_content"
+                        android:minWidth="72dp"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textColor="@color/text_primary"
@@ -103,11 +106,21 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/now_reload"
-                style="@style/BtnTonal"
-                android:layout_marginTop="14dp"
-                android:text="@string/now_reload" />
+            <LinearLayout
+                style="@style/Options"
+                android:layout_marginTop="14dp">
+
+                <Button
+                    android:id="@+id/now_full"
+                    style="@style/BtnPrimary"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/now_full" />
+
+                <Button
+                    android:id="@+id/now_reload"
+                    style="@style/BtnTonal"
+                    android:text="@string/now_reload" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Búsqueda manual -->
@@ -147,6 +160,25 @@
                 android:id="@+id/search_results"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
+
+        <!-- Reproductores -->
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                style="@style/Section"
+                android:text="@string/section_players" />
+
+            <TextView
+                style="@style/Hint"
+                android:text="@string/players_hint" />
+
+            <LinearLayout
+                android:id="@+id/players"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:orientation="vertical" />
         </LinearLayout>
 

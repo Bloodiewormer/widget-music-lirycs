@@ -5,6 +5,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.media.AudioDeviceInfo
+import android.media.AudioManager
 import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.PlaybackState
@@ -24,6 +26,7 @@ object NowPlaying {
     enum class Status { NO_ACCESS, IDLE, SEARCHING, FOUND, NOT_FOUND, UNAVAILABLE }
 
     private const val OFFSET_PREFIX = "offset:"
+    private const val LEARN_PREFIX = "learn:"
     const val OFFSET_STEP_MS = 500L
     private const val RETRY_DELAY_MS = 30_000L
     private const val MAX_RETRIES = 3
@@ -46,6 +49,8 @@ object NowPlaying {
         private set
     var playerIntent: PendingIntent? = null
         private set
+    private var controls: MediaController.TransportControls? = null
+
     var screenOn = true
         set(value) {
             if (field == value) return
@@ -94,6 +99,12 @@ object NowPlaying {
 
     fun currentIndex(): Int = lyrics?.indexAt(positionMs(), track?.durationMs ?: 0) ?: -1
 
+    /** Salta en el reproductor al inicio de la línea `index` (solo letras sincronizadas). */
+    fun seekToLine(index: Int) {
+        val line = lyrics?.takeIf { it.synced }?.lines?.getOrNull(index) ?: return
+        controls?.seekTo((line.timeMs - offsetMs()).coerceAtLeast(0))
+    }
+
     // ---- Entradas desde el servicio ----
 
     fun update(controller: MediaController?) {
@@ -113,12 +124,14 @@ object NowPlaying {
         )
         state = controller.playbackState
         playerIntent = controller.sessionActivity
+        controls = controller.transportControls
         if (next.key != track?.key) {
             track = next
             albumColor = dominantColor(
                 metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART) ?: metadata.getBitmap(MediaMetadata.METADATA_KEY_ART),
             )
             retries = 0
+            refreshAudioContext()
             load(force = false)
         } else if (next.durationMs > 0 && track?.durationMs != next.durationMs) {
             // Algunos reproductores publican la duración un instante después del título.
@@ -134,6 +147,7 @@ object NowPlaying {
         lyrics = null
         state = null
         playerIntent = null
+        controls = null
         albumColor = null
         searching = false
         unavailable = false
@@ -190,17 +204,65 @@ object NowPlaying {
         changed()
     }
 
-    // ---- Desfase por canción ----
+    // ---- Desfase: por canción, o aprendido automáticamente ----
+    //
+    // No se puede "escuchar" la canción para saber si la letra va desfasada: Android no deja
+    // capturar el audio de Spotify y similares. Pero el desfase suele ser sistemático (latencia
+    // de los audífonos Bluetooth, un reproductor que informa la posición tarde...). Así que cada
+    // vez que corriges una canción se guarda como muestra para ese reproductor + salida de audio,
+    // y las canciones que nunca ajustaste usan la mediana de esas muestras.
 
-    fun offsetMs(): Long = track?.let { prefs(app).getLong(OFFSET_PREFIX + it.key, 0) } ?: 0
+    /** Reproductor + salida de audio actuales, p. ej. "com.spotify.music@bt". */
+    private var audioContext = ""
+    private var learnedMs: Long? = null
+
+    private fun refreshAudioContext() {
+        val audio = app.getSystemService(AudioManager::class.java)
+        val bluetooth = audio.getDevices(AudioManager.GET_DEVICES_OUTPUTS).any {
+            it.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP || it.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO
+        }
+        audioContext = "${track?.player.orEmpty()}@${if (bluetooth) "bt" else "local"}"
+        learnedMs = learned()
+    }
+
+    /** Mediana de lo que corregiste en este contexto; `null` con menos de 2 canciones ajustadas. */
+    private fun learned(): Long? {
+        val prefix = "$LEARN_PREFIX$audioContext:"
+        val samples = prefs(app).all.filterKeys { it.startsWith(prefix) }.values.mapNotNull { it as? Long }.sorted()
+        if (samples.size < 2) return null
+        val median = samples[samples.size / 2]
+        return (median / 100) * 100 // redondeado a décimas de segundo
+    }
+
+    /** Desfase elegido para esta canción si lo hay; si no, el aprendido. */
+    fun offsetMs(): Long {
+        val current = track ?: return 0
+        val own = prefs(app).getLong(OFFSET_PREFIX + current.key, Long.MIN_VALUE)
+        return if (own != Long.MIN_VALUE) own else learnedMs ?: 0
+    }
+
+    fun offsetIsAuto(): Boolean = track?.let { !prefs(app).contains(OFFSET_PREFIX + it.key) && learnedMs != null } ?: false
 
     fun adjustOffset(deltaMs: Long) = setOffset(offsetMs() + deltaMs)
 
     fun setOffset(valueMs: Long) {
         val current = track ?: return
-        prefs(app).edit().apply {
-            if (valueMs == 0L) remove(OFFSET_PREFIX + current.key) else putLong(OFFSET_PREFIX + current.key, valueMs)
-        }.apply()
+        prefs(app).edit()
+            .putLong(OFFSET_PREFIX + current.key, valueMs)
+            .putLong("$LEARN_PREFIX$audioContext:${current.key}", valueMs)
+            .apply()
+        learnedMs = learned()
+        changed()
+    }
+
+    /** Olvida el ajuste de esta canción: vuelve al desfase aprendido (o a cero). */
+    fun resetOffset() {
+        val current = track ?: return
+        prefs(app).edit()
+            .remove(OFFSET_PREFIX + current.key)
+            .remove("$LEARN_PREFIX$audioContext:${current.key}")
+            .apply()
+        learnedMs = learned()
         changed()
     }
 

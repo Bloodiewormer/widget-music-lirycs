@@ -38,6 +38,7 @@ class NowPlayingService : NotificationListenerService() {
         NowPlaying.init(this)
         NowPlaying.connected = true
         NowPlaying.screenOn = getSystemService(PowerManager::class.java).isInteractive
+        Players.onChanged = { pick() }
         registerReceiver(screen, IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_ON)
             addAction(Intent.ACTION_SCREEN_OFF)
@@ -59,6 +60,7 @@ class NowPlayingService : NotificationListenerService() {
         sessions?.removeOnActiveSessionsChangedListener(sessionsChanged)
         sessions = null
         runCatching { unregisterReceiver(screen) }
+        Players.onChanged = null
         controllers.values.forEach { (controller, callback) -> controller.unregisterCallback(callback) }
         controllers.clear()
         active = null
@@ -75,6 +77,7 @@ class NowPlayingService : NotificationListenerService() {
         }
         for (controller in list) {
             if (controller.sessionToken in controllers) continue
+            Players.remember(this, controller.packageName)
             val callback = object : MediaController.Callback() {
                 override fun onMetadataChanged(metadata: MediaMetadata?) = pick()
                 override fun onPlaybackStateChanged(state: PlaybackState?) = pick()
@@ -88,10 +91,11 @@ class NowPlayingService : NotificationListenerService() {
 
     /**
      * Prioridad: la sesión que esté sonando; si ninguna suena, la que se mostraba (pausada);
-     * si ya no existe, la más reciente según Android.
+     * si ya no existe, la más reciente según Android. Los reproductores ignorados no cuentan.
      */
     private fun pick() {
-        val all = controllers.values.map { it.first }
+        val ignored = Players.ignored(this)
+        val all = controllers.values.map { it.first }.filter { it.packageName !in ignored }
         val playing = all.firstOrNull { it.playbackState?.state == PlaybackState.STATE_PLAYING }
         val current = active?.takeIf { a -> all.any { it.sessionToken == a.sessionToken } }
         active = playing ?: current ?: all.firstOrNull()

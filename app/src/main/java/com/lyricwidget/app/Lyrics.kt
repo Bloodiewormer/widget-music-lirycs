@@ -44,6 +44,9 @@ class Lyrics(
     }
 
     companion object {
+        /** Texto para silencios instrumentales y para antes de la primera línea. */
+        const val PAUSE = "· · ·"
+
         private val TAG = Regex("""\[(\d{1,3}):(\d{1,2}(?:[.:]\d{1,3})?)]""")
 
         fun fromLrc(lrc: String, source: String): Lyrics? {

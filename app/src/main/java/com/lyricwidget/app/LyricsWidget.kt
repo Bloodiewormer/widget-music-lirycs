@@ -54,13 +54,33 @@ class LyricsWidget : AppWidgetProvider() {
 
         fun hasWidgets(context: Context) = ids(context).isNotEmpty()
 
+        /** Ids de las líneas (anterior, actual, siguiente, después) de cada una de las dos caras del flipper. */
+        private val FACES = arrayOf(
+            intArrayOf(R.id.prev_a, R.id.current_a, R.id.next_a, R.id.next2_a),
+            intArrayOf(R.id.prev_b, R.id.current_b, R.id.next_b, R.id.next2_b),
+        )
+
+        /**
+         * Cara visible del flipper y lo que muestra. Cuando cambia la línea se escribe en la cara
+         * oculta y se pasa a ella, así el lanzador anima la transición. Si solo avanza la barra,
+         * se reescribe la misma cara y no hay animación.
+         */
+        private var face = 0
+        private var faceContent: String? = null
+
         fun updateAll(context: Context) {
+            val content = "${NowPlaying.track?.key}|${NowPlaying.status}|${System.identityHashCode(NowPlaying.lyrics)}|${NowPlaying.currentIndex()}"
+            if (content != faceContent) {
+                faceContent = content
+                face = 1 - face
+            }
             val manager = AppWidgetManager.getInstance(context)
             for (id in ids(context)) manager.updateAppWidget(id, build(context, manager.getAppWidgetOptions(id)))
         }
 
         private fun build(context: Context, options: Bundle?): RemoteViews {
             val views = RemoteViews(context.packageName, R.layout.widget_lyrics)
+            val (prevId, currentId, nextId, next2Id) = FACES[face].toList()
             val style = WidgetTheme.background(context)
             val fg = style.foreground
             views.setInt(R.id.bg, "setColorFilter", WidgetTheme.backgroundColor(context))
@@ -69,16 +89,16 @@ class LyricsWidget : AppWidgetProvider() {
             views.setTextColor(R.id.offset, withAlpha(fg, 0xB3))
             views.setInt(R.id.offset_minus, "setColorFilter", withAlpha(fg, 0xB3))
             views.setInt(R.id.offset_plus, "setColorFilter", withAlpha(fg, 0xB3))
-            views.setTextColor(R.id.line_prev, withAlpha(fg, 0x66))
-            views.setTextColor(R.id.line_current, WidgetTheme.currentLineColor(context))
-            views.setTextColor(R.id.line_next, withAlpha(fg, 0x99))
-            views.setTextColor(R.id.line_next2, withAlpha(fg, 0x66))
+            views.setTextColor(prevId, withAlpha(fg, 0x66))
+            views.setTextColor(currentId, WidgetTheme.currentLineColor(context))
+            views.setTextColor(nextId, withAlpha(fg, 0x99))
+            views.setTextColor(next2Id, withAlpha(fg, 0x66))
 
             val sp = WidgetTheme.textSp(context)
-            views.setTextViewTextSize(R.id.line_prev, TypedValue.COMPLEX_UNIT_SP, sp)
-            views.setTextViewTextSize(R.id.line_current, TypedValue.COMPLEX_UNIT_SP, sp * 1.3f)
-            views.setTextViewTextSize(R.id.line_next, TypedValue.COMPLEX_UNIT_SP, sp)
-            views.setTextViewTextSize(R.id.line_next2, TypedValue.COMPLEX_UNIT_SP, sp)
+            views.setTextViewTextSize(prevId, TypedValue.COMPLEX_UNIT_SP, sp)
+            views.setTextViewTextSize(currentId, TypedValue.COMPLEX_UNIT_SP, sp * 1.3f)
+            views.setTextViewTextSize(nextId, TypedValue.COMPLEX_UNIT_SP, sp)
+            views.setTextViewTextSize(next2Id, TypedValue.COMPLEX_UNIT_SP, sp)
 
             val fit = fitLines(context, options, sp)
 
@@ -86,7 +106,12 @@ class LyricsWidget : AppWidgetProvider() {
                 context, 0, Intent(context, MainActivity::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
-            views.setOnClickPendingIntent(R.id.lines, openApp)
+            val openLyrics = PendingIntent.getActivity(
+                context, 3, Intent(context, LyricsActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+            // Con letra: verla completa. Sin ella: a la app, donde está la búsqueda manual.
+            views.setOnClickPendingIntent(R.id.lines, if (NowPlaying.status == NowPlaying.Status.FOUND) openLyrics else openApp)
             views.setOnClickPendingIntent(R.id.track, NowPlaying.playerIntent ?: openApp)
             views.setOnClickPendingIntent(R.id.offset_minus, broadcast(context, ACTION_OFFSET_MINUS, 1))
             views.setOnClickPendingIntent(R.id.offset_plus, broadcast(context, ACTION_OFFSET_PLUS, 2))
@@ -116,7 +141,7 @@ class LyricsWidget : AppWidgetProvider() {
             views.setViewVisibility(R.id.offset_minus, offsetVisibility)
             views.setViewVisibility(R.id.offset, offsetVisibility)
             views.setViewVisibility(R.id.offset_plus, offsetVisibility)
-            views.setTextViewText(R.id.offset, formatOffset(NowPlaying.offsetMs()))
+            views.setTextViewText(R.id.offset, formatOffset(NowPlaying.offsetMs(), NowPlaying.offsetIsAuto()))
 
             val message = when (NowPlaying.status) {
                 NowPlaying.Status.NO_ACCESS -> R.string.widget_no_access
@@ -127,30 +152,32 @@ class LyricsWidget : AppWidgetProvider() {
                 NowPlaying.Status.FOUND -> if (lyrics?.instrumental == true) R.string.widget_instrumental else 0
             }
             if (message != 0 || lyrics == null) {
-                views.setViewVisibility(R.id.line_prev, View.GONE)
-                views.setViewVisibility(R.id.line_next, View.GONE)
-                views.setViewVisibility(R.id.line_next2, View.GONE)
-                views.setViewVisibility(R.id.line_current, View.VISIBLE)
-                views.setTextViewText(R.id.line_current, context.getString(message))
-                return views
+                views.setViewVisibility(prevId, View.GONE)
+                views.setViewVisibility(nextId, View.GONE)
+                views.setViewVisibility(next2Id, View.GONE)
+                views.setViewVisibility(currentId, View.VISIBLE)
+                views.setTextViewText(currentId, context.getString(message))
+            } else {
+                val index = NowPlaying.currentIndex()
+                fun line(i: Int): String = lyrics.lines.getOrNull(i)?.text?.ifBlank { Lyrics.PAUSE } ?: ""
+                views.setTextViewText(prevId, line(index - 1))
+                views.setTextViewText(currentId, if (index < 0) Lyrics.PAUSE else line(index))
+                views.setTextViewText(nextId, line(index + 1))
+                views.setTextViewText(next2Id, line(index + 2))
+                views.setViewVisibility(currentId, View.VISIBLE)
+                views.setInt(currentId, "setMaxLines", fit.currentLines)
+                views.setViewVisibility(prevId, if (fit.prev) View.VISIBLE else View.GONE)
+                views.setViewVisibility(nextId, if (fit.next) View.VISIBLE else View.GONE)
+                views.setViewVisibility(next2Id, if (fit.next2) View.VISIBLE else View.GONE)
+                if (!lyrics.synced) {
+                    views.setTextViewText(R.id.track, context.getString(R.string.widget_unsynced, track?.label.orEmpty()))
+                }
             }
-
-            val index = NowPlaying.currentIndex()
-            fun line(i: Int): String = lyrics.lines.getOrNull(i)?.text?.ifBlank { "♪" } ?: ""
-            views.setTextViewText(R.id.line_prev, line(index - 1))
-            views.setTextViewText(R.id.line_current, if (index < 0) "♪" else line(index))
-            views.setTextViewText(R.id.line_next, line(index + 1))
-            views.setTextViewText(R.id.line_next2, line(index + 2))
-            views.setViewVisibility(R.id.line_current, View.VISIBLE)
-            views.setInt(R.id.line_current, "setMaxLines", fit.currentLines)
-            views.setViewVisibility(R.id.line_prev, if (fit.prev) View.VISIBLE else View.GONE)
-            views.setViewVisibility(R.id.line_next, if (fit.next) View.VISIBLE else View.GONE)
-            views.setViewVisibility(R.id.line_next2, if (fit.next2) View.VISIBLE else View.GONE)
-            if (!lyrics.synced) {
-                views.setTextViewText(R.id.track, context.getString(R.string.widget_unsynced, track?.label.orEmpty()))
-            }
+            // Al final: primero se escribe la cara oculta y luego se pasa a ella, animando el cambio.
+            views.setDisplayedChild(R.id.lines, face)
             return views
         }
+
 
         private class Fit(val currentLines: Int, val prev: Boolean, val next: Boolean, val next2: Boolean)
 
@@ -179,8 +206,11 @@ class LyricsWidget : AppWidgetProvider() {
             return Fit(if (twoRows) 2 else 1, prev, next, next2)
         }
 
-        fun formatOffset(ms: Long): String =
-            if (ms == 0L) "±0 s" else String.format(Locale.ROOT, "%+.1f s", ms / 1000.0)
+        /** "auto" marca un desfase aprendido de tus ajustes anteriores, no uno elegido para esta canción. */
+        fun formatOffset(ms: Long, auto: Boolean = false): String {
+            val value = if (ms == 0L) "±0 s" else String.format(Locale.ROOT, "%+.1f s", ms / 1000.0)
+            return if (auto && ms != 0L) "auto $value" else value
+        }
 
         private fun withAlpha(color: Int, alpha: Int) = (color and 0x00FFFFFF) or (alpha shl 24)
 
