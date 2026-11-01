@@ -21,6 +21,9 @@
     <string name="access_ok">Acceso concedido</string>
     <string name="access_missing">Falta conceder el acceso</string>
     <string name="access_grant">Conceder acceso</string>
+    <string name="restricted_title">¿Dice «Configuración restringida»?</string>
+    <string name="restricted_steps">Android bloquea este permiso en las apps instaladas desde un archivo APK. Para desbloquearlo:\n1. Toca «Abrir información de la app».\n2. Toca el menú ⋮ (arriba a la derecha) → «Permitir configuración restringida» y confirma.\n3. Vuelve aquí y toca «Conceder acceso».</string>
+    <string name="restricted_open">Abrir información de la app</string>
 
     <!-- Sonando ahora -->
     <string name="section_now">Sonando ahora</string>

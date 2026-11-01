@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.format.Formatter
@@ -32,6 +34,9 @@ class MainActivity : Activity() {
         NowPlaying.init(this)
         setContentView(R.layout.activity_main)
 
+        findViewById<Button>(R.id.access_app_info).setOnClickListener {
+            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
+        }
         findViewById<Button>(R.id.access_grant).setOnClickListener {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
@@ -75,6 +80,7 @@ class MainActivity : Activity() {
         val granted = NowPlaying.hasAccess(this)
         findViewById<TextView>(R.id.access_status).setText(if (granted) R.string.access_ok else R.string.access_missing)
         visible(R.id.access_grant, !granted)
+        visible(R.id.access_restricted, !granted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     }
 
     private fun refreshNow() {
