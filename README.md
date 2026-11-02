@@ -48,7 +48,7 @@
 | **Reloj cuando no hay música** | Sin reproductor activo, o tras 2 minutos en pausa, el widget muestra la hora y la fecha (`TextClock`, que Android actualiza sin despertar a la app). |
 | **Ajuste de desfase** | Botones `−` / `+` en el propio widget (pasos de 0.5 s), guardados por canción. La app aprende de tus correcciones: tras ajustar un par de canciones con el mismo reproductor y salida de audio (por ejemplo, audífonos Bluetooth), las canciones nuevas empiezan ya corregidas y se marcan como "auto". |
 | **Animación suave** | En el widget la línea nueva entra mientras la anterior se desvanece; en la letra completa la línea actual se ilumina y se centra. Si una parte de la canción es más corta que la animación, el cambio es instantáneo en lugar de quedar cortado. Respeta la opción del sistema que desactiva animaciones. |
-| **Refresco ligero** | El avance de la barra actualiza solo esa vista; no reinicia la animación ni vuelve a medir las letras en cada paso. |
+| **Refresco ligero** | En Android 9+ la barra se actualiza por separado. En Android 8 avanza al cambiar la frase: el lanzador de algunos equipos reinicia la animación incluso con una actualización parcial. |
 | **Letra completa** | Toca la letra en el widget para verla entera, sobre el color de la portada, con la línea actual resaltada y centrada. Toca cualquier línea para saltar a ese momento de la canción. Incluye desfase, tamaño de letra `A−`/`A+` y mantiene la pantalla encendida mientras suena (modo karaoke). |
 | **Búsqueda manual** | Si no encuentra la letra o trae la equivocada, corrige artista/título en la app y elige el resultado correcto. |
 | **Caché offline** | Cada letra se descarga una sola vez y queda guardada; funciona sin internet para canciones ya escuchadas. |

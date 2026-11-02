@@ -94,7 +94,11 @@ class LyricsWidget : AppWidgetProvider() {
             if (!forceFull && content == faceContent) {
                 // La barra cambia cada pocos segundos. Actualizar solo esa vista evita reiniciar el
                 // ViewFlipper y recalcular el texto en launchers lentos (especialmente Android 8).
-                if (progress != lastProgress && progress >= 0 && WidgetTheme.showProgress(context) && !NowPlaying.showClock) {
+                // El launcher de la Lenovo reproduce otra vez la animación guardada incluso con
+                // una actualización parcial de la barra. En Android 8 se mueve la barra solo
+                // junto con una frase nueva, para no fingir transiciones durante el instrumental.
+                if (!Device.lite(context) && progress != lastProgress && progress >= 0 &&
+                    WidgetTheme.showProgress(context) && !NowPlaying.showClock) {
                     val light = WidgetTheme.background(context).foreground == Color.WHITE
                     val views = RemoteViews(context.packageName, R.layout.widget_lyrics)
                     views.setProgressBar(if (light) R.id.progress_light else R.id.progress_dark, 1000, progress, false)
