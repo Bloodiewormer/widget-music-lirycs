@@ -74,13 +74,18 @@ class LyricsWidget : AppWidgetProvider() {
         private var face = 0
         private var faceContent: String? = null
         private var lineContent: String? = null
+        private var lastVisibleLine: String? = null
         private var lastFlipAt = 0L
         private var lastProgress = -1
 
         fun updateAll(context: Context, forceFull: Boolean = false) {
+            val lyrics = NowPlaying.lyrics
+            val index = NowPlaying.currentIndex()
+            val visibleLine = lyrics?.lines?.getOrNull(index)?.text?.trim().orEmpty().ifEmpty { Lyrics.PAUSE }
+            // Varias marcas LRC vacías pueden avanzar el índice sin cambiar lo que se lee.
             val currentLine = "${NowPlaying.track?.key}|${NowPlaying.status}|" +
-                "${System.identityHashCode(NowPlaying.lyrics)}|${NowPlaying.currentIndex()}"
-            val content = "$currentLine|${NowPlaying.track?.label}|" +
+                "${System.identityHashCode(lyrics)}|$visibleLine"
+            val content = "$currentLine|$index|${NowPlaying.track?.label}|" +
                 "${NowPlaying.showClock}|${NowPlaying.albumColor}|${NowPlaying.offsetMs()}|${NowPlaying.offsetIsAuto()}"
             val manager = AppWidgetManager.getInstance(context)
             val widgetIds = ids(context)
@@ -99,26 +104,33 @@ class LyricsWidget : AppWidgetProvider() {
                 return
             }
             lastProgress = progress
-            if (content != faceContent) {
-                faceContent = content
-            }
+            val hasRendered = faceContent != null
+            faceContent = content
+            var flipped = false
             if (currentLine != lineContent) {
                 lineContent = currentLine
-                // Android 8 conserva el cambio de cara de v1.2. En equipos nuevos se omite la
-                // animación cuando una frase es demasiado corta para terminarla sin corte.
+                val newPhrase = visibleLine != lastVisibleLine && visibleLine != Lyrics.PAUSE
+                lastVisibleLine = visibleLine
+                // El silencio instrumental cambia el contenido sin animar el ViewFlipper.
+                // Android 8 conserva la transición de v1.2 para las frases cantadas.
                 val now = SystemClock.elapsedRealtime()
                 val animation = Device.widgetAnimationMs
                 val room = Device.lite(context) ||
                     (NowPlaying.currentLineDurationMs() >= animation * 2 && now - lastFlipAt >= animation + 60)
-                if (Device.animationsEnabled && room) {
+                if (NowPlaying.isPlaying && newPhrase && Device.animationsEnabled && room) {
                     face = 1 - face
                     lastFlipAt = now
+                    flipped = true
                 }
             }
-            for (id in widgetIds) manager.updateAppWidget(id, build(context, manager.getAppWidgetOptions(id)))
+            for (id in widgetIds) {
+                val views = build(context, manager.getAppWidgetOptions(id), setFace = flipped || !hasRendered || forceFull)
+                if (flipped || !hasRendered || forceFull) manager.updateAppWidget(id, views)
+                else manager.partiallyUpdateAppWidget(id, views)
+            }
         }
 
-        private fun build(context: Context, options: Bundle?): RemoteViews {
+        private fun build(context: Context, options: Bundle?, setFace: Boolean = true): RemoteViews {
             val views = RemoteViews(context.packageName, R.layout.widget_lyrics)
             val (prevId, currentId, nextId, next2Id) = FACES[face].toList()
             val style = WidgetTheme.background(context)
@@ -225,7 +237,7 @@ class LyricsWidget : AppWidgetProvider() {
                 }
             }
             // Al final: primero se escribe la cara oculta y luego se pasa a ella, animando el cambio.
-            views.setDisplayedChild(R.id.lines, face)
+            if (setFace) views.setDisplayedChild(R.id.lines, face)
             return views
         }
 
