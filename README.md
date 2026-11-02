@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
-    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.4.1-FF5A1F?logo=android&logoColor=white">
+    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.5-FF5A1F?logo=android&logoColor=white">
   </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
@@ -89,12 +89,12 @@ Igual que [Pano Scrobbler](https://github.com/kawaiiDango/pano-scrobbler): Andro
 
 ### Opción A: descargar el APK (recomendado)
 
-**[Descargar LyricWidget-v1.4.1.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.4.1.apk)**
+**[Descargar LyricWidget-v1.5.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.5.apk)**
 
 Ábrelo en el teléfono (permitiendo instalar apps desconocidas) o instálalo por USB:
 
 ```bash
-adb install -r LyricWidget-v1.4.1.apk
+adb install -r LyricWidget-v1.5.apk
 ```
 
 ### Opción B: compilar desde el código fuente
