@@ -292,6 +292,14 @@
                 android:minHeight="44dp"
                 android:text="@string/appearance_show_progress"
                 android:textColor="@color/text_primary" />
+
+            <CheckBox
+                android:id="@+id/animate_lines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="44dp"
+                android:text="@string/appearance_animate_lines"
+                android:textColor="@color/text_primary" />
         </LinearLayout>
 
         <!-- Caché -->

@@ -13,6 +13,7 @@ object WidgetTheme {
     private const val KEY_SHOW_TITLE = "show_title"
     private const val KEY_SHOW_PROGRESS = "show_progress"
     private const val KEY_CONTEXT = "context_lines"
+    private const val KEY_ANIMATE_LINES = "animate_lines"
 
     val ACCENTS = intArrayOf(
         Color.WHITE,
@@ -83,10 +84,12 @@ object WidgetTheme {
     fun showTitle(context: Context): Boolean = prefs(context).getBoolean(KEY_SHOW_TITLE, true)
     fun showProgress(context: Context): Boolean = prefs(context).getBoolean(KEY_SHOW_PROGRESS, true)
     fun contextLines(context: Context): Int = prefs(context).getInt(KEY_CONTEXT, 3).coerceIn(0, 3)
+    fun animateLines(context: Context): Boolean = prefs(context).getBoolean(KEY_ANIMATE_LINES, true)
 
     fun setShowOffset(context: Context, show: Boolean) = setBoolean(context, KEY_SHOW_OFFSET, show)
     fun setShowTitle(context: Context, show: Boolean) = setBoolean(context, KEY_SHOW_TITLE, show)
     fun setShowProgress(context: Context, show: Boolean) = setBoolean(context, KEY_SHOW_PROGRESS, show)
+    fun setAnimateLines(context: Context, animate: Boolean) = setBoolean(context, KEY_ANIMATE_LINES, animate)
 
     fun setContextLines(context: Context, count: Int) {
         prefs(context).edit().putInt(KEY_CONTEXT, count.coerceIn(0, 3)).apply()

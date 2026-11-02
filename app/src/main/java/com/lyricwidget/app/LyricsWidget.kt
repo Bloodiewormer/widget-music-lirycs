@@ -121,7 +121,7 @@ class LyricsWidget : AppWidgetProvider() {
                 val animation = Device.widgetAnimationMs
                 val room = Device.lite(context) ||
                     (NowPlaying.currentLineDurationMs() >= animation * 2 && now - lastFlipAt >= animation + 60)
-                if (NowPlaying.isPlaying && newPhrase && Device.animationsEnabled && room) {
+                if (NowPlaying.isPlaying && newPhrase && Device.animationsEnabled && room && WidgetTheme.animateLines(context)) {
                     face = 1 - face
                     lastFlipAt = now
                     flipped = true
@@ -137,6 +137,13 @@ class LyricsWidget : AppWidgetProvider() {
         private fun build(context: Context, options: Bundle?, setFace: Boolean = true): RemoteViews {
             val views = RemoteViews(context.packageName, R.layout.widget_lyrics)
             val (prevId, currentId, nextId, next2Id) = FACES[face].toList()
+            if (!setFace || !NowPlaying.isPlaying) {
+                val (otherPrev, otherCurrent, otherNext, otherNext2) = FACES[1 - face].toList()
+                views.setTextViewText(otherPrev, "")
+                views.setTextViewText(otherCurrent, "")
+                views.setTextViewText(otherNext, "")
+                views.setTextViewText(otherNext2, "")
+            }
             val style = WidgetTheme.background(context)
             val fg = style.foreground
             views.setInt(R.id.bg, "setColorFilter", WidgetTheme.backgroundColor(context))
