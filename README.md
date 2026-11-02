@@ -11,11 +11,11 @@
 
 <p align="center">
   <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
-    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.3-FF5A1F?logo=android&logoColor=white">
+    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.4-FF5A1F?logo=android&logoColor=white">
   </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
-  <img alt="APK ~86 KB" src="https://img.shields.io/badge/APK-~86%20KB-FF5A1F">
+  <img alt="APK ~90 KB" src="https://img.shields.io/badge/APK-~90%20KB-FF5A1F">
   <img alt="Sin backend" src="https://img.shields.io/badge/backend-ninguno-0F172A">
 </p>
 
@@ -89,14 +89,12 @@ Igual que [Pano Scrobbler](https://github.com/kawaiiDango/pano-scrobbler): Andro
 
 ### Opción A: descargar el APK (recomendado)
 
-**[Descargar LyricWidget-v1.3.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.3.apk)**
-
-La v1.4 está en pruebas en el [PR #4](https://github.com/Bloodiewormer/widget-music-lirycs/pull/4); se publicará tras comprobar la transición restaurada en Android 8.
+**[Descargar LyricWidget-v1.4.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.4.apk)**
 
 Ábrelo en el teléfono (permitiendo instalar apps desconocidas) o instálalo por USB:
 
 ```bash
-adb install -r LyricWidget-v1.3.apk
+adb install -r LyricWidget-v1.4.apk
 ```
 
 ### Opción B: compilar desde el código fuente
