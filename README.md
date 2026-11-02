@@ -11,11 +11,11 @@
 
 <p align="center">
   <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
-    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.3-FF5A1F?logo=android&logoColor=white">
+    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.4.1-FF5A1F?logo=android&logoColor=white">
   </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
-  <img alt="APK ~86 KB" src="https://img.shields.io/badge/APK-~86%20KB-FF5A1F">
+  <img alt="APK ~90 KB" src="https://img.shields.io/badge/APK-~90%20KB-FF5A1F">
   <img alt="Sin backend" src="https://img.shields.io/badge/backend-ninguno-0F172A">
 </p>
 
@@ -31,7 +31,7 @@
 │  LÍNEA ACTUAL, EN GRANDE Y CON COLOR                     │
 │  línea siguiente                                         │
 │  la que viene después                                    │
-│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━──────────────────────── │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━───────────────────────── │
 ╰──────────────────────────────────────────────────────────╯
                      Letra en vivo (4×2, redimensionable)
 ```
@@ -44,15 +44,16 @@
 
 | Función | Detalle |
 |---|---|
-| **Widget redimensionable** | Muestra de 1 a 4 líneas según el alto que le des; calcula qué cabe para que ninguna quede cortada. Barra fina con el avance de la canción. |
+| **Widget redimensionable** | En equipos modernos da prioridad a la línea actual: si es larga, ocupa varias filas y ceden las líneas vecinas. En Android 8 conserva la distribución ligera de la v1.2. Barra fina con el avance de la canción. |
 | **Reloj cuando no hay música** | Sin reproductor activo, o tras 2 minutos en pausa, el widget muestra la hora y la fecha (`TextClock`, que Android actualiza sin despertar a la app). |
 | **Ajuste de desfase** | Botones `−` / `+` en el propio widget (pasos de 0.5 s), guardados por canción. La app aprende de tus correcciones: tras ajustar un par de canciones con el mismo reproductor y salida de audio (por ejemplo, audífonos Bluetooth), las canciones nuevas empiezan ya corregidas y se marcan como "auto". |
 | **Animación suave** | En el widget la línea nueva entra mientras la anterior se desvanece; en la letra completa la línea actual se ilumina y se centra. Si una parte de la canción es más corta que la animación, el cambio es instantáneo en lugar de quedar cortado. Respeta la opción del sistema que desactiva animaciones. |
+| **Refresco ligero** | En Android 9+ la barra se actualiza por separado. En Android 8 avanza al cambiar la frase: el lanzador de algunos equipos reinicia la animación incluso con una actualización parcial. |
 | **Letra completa** | Toca la letra en el widget para verla entera, sobre el color de la portada, con la línea actual resaltada y centrada. Toca cualquier línea para saltar a ese momento de la canción. Incluye desfase, tamaño de letra `A−`/`A+` y mantiene la pantalla encendida mientras suena (modo karaoke). |
 | **Búsqueda manual** | Si no encuentra la letra o trae la equivocada, corrige artista/título en la app y elige el resultado correcto. |
 | **Caché offline** | Cada letra se descarga una sola vez y queda guardada; funciona sin internet para canciones ya escuchadas. |
 | **Limpieza de títulos** | Quita "Remastered 2011", "(Official Video)", "feat. …", "- Topic", "VEVO"… y entiende títulos de YouTube tipo "Artista - Canción". |
-| **Apariencia** | Fondo tomado del color de la **portada del álbum**, oscuro, negro OLED, cristal o claro; 18 colores para la línea actual; 4 tamaños de letra. |
+| **Apariencia** | Fondo tomado del color de la **portada del álbum**, oscuro, negro OLED, cristal o claro; 18 colores para la línea actual; 4 tamaños de letra. Puedes elegir cuántas líneas vecinas mostrar y ocultar los controles − / +, el título o la barra de avance. |
 | **Ignorar reproductores** | Desmarca las apps cuyas canciones no quieres ver (videos de YouTube, podcasts…). |
 | **Tema oscuro** | La app sigue el modo oscuro del sistema (Android 10+). |
 | **Letras sin tiempos** | Si solo hay texto plano, reparte las líneas a lo largo de la canción (marcado como "aprox."). |
@@ -62,13 +63,13 @@
 
 | | Android 8 o gama baja | Android 9 a 11 | Android 12 o superior |
 |---|---|---|---|
-| Cambio de línea en el widget | Fundido corto (220 ms) | Deslizamiento con fundido (340 ms) | Deslizamiento con fundido (340 ms) |
+| Cambio de línea en el widget | Deslizamiento con fundido de la v1.2 (380 ms) | Deslizamiento con fundido (340 ms) | Deslizamiento con fundido (340 ms) |
 | Letra completa | Solo cambio de color, más rápido | Color y escala | Color y escala |
 | Fondo de la letra completa | Color promedio de la portada | Color promedio de la portada | Portada difuminada (blur nativo) |
 | Fondo del widget | Portada, oscuro, negro, cristal, claro | Igual | Además «Sistema» (Material You) |
 | Barra de avance | Blanca o gris | Blanca o gris | Color de acento |
 | Esquinas del widget | 24 dp | 24 dp | Las del sistema |
-| Líneas visibles | Estimadas por la altura del widget | Igual | Calculadas con los tamaños exactos que informa el lanzador |
+| Líneas visibles | Distribución ligera de la v1.2 | Ajustadas a la línea actual | Ajustadas a la línea actual con los tamaños exactos que informa el lanzador |
 
 ## Cero impacto en batería
 
@@ -88,12 +89,12 @@ Igual que [Pano Scrobbler](https://github.com/kawaiiDango/pano-scrobbler): Andro
 
 ### Opción A: descargar el APK (recomendado)
 
-**[Descargar LyricWidget-v1.3.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.3.apk)**
+**[Descargar LyricWidget-v1.4.1.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.4.1.apk)**
 
 Ábrelo en el teléfono (permitiendo instalar apps desconocidas) o instálalo por USB:
 
 ```bash
-adb install -r LyricWidget-v1.3.apk
+adb install -r LyricWidget-v1.4.1.apk
 ```
 
 ### Opción B: compilar desde el código fuente
@@ -116,7 +117,7 @@ adb install -r app/build/outputs/apk/release/app-release.apk
    ```
 > **Android 13 o superior:** si al activar el acceso aparece «Configuración restringida», es porque la app se instaló desde un APK. Ve a *Ajustes → Apps → LyricWidget*, toca el menú ⋮ → **Permitir configuración restringida** y vuelve a intentarlo. La app muestra estos pasos y un botón directo cuando falta el acceso.
 
-&
+2. Mantén presionado el escritorio → **Widgets** → **Letra en vivo**.
 3. Pon música. Tocar el título del widget abre el reproductor; tocar la letra abre los ajustes.
 
 ---

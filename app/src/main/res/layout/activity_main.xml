@@ -253,6 +253,45 @@
                     style="@style/Options"
                     android:layout_width="wrap_content" />
             </HorizontalScrollView>
+
+            <TextView
+                style="@style/Label"
+                android:text="@string/appearance_context" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/context_options"
+                    style="@style/Options"
+                    android:layout_width="wrap_content" />
+            </HorizontalScrollView>
+
+            <CheckBox
+                android:id="@+id/show_offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="44dp"
+                android:text="@string/appearance_show_offset"
+                android:textColor="@color/text_primary" />
+
+            <CheckBox
+                android:id="@+id/show_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="44dp"
+                android:text="@string/appearance_show_title"
+                android:textColor="@color/text_primary" />
+
+            <CheckBox
+                android:id="@+id/show_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="44dp"
+                android:text="@string/appearance_show_progress"
+                android:textColor="@color/text_primary" />
         </LinearLayout>
 
         <!-- Caché -->

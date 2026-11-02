@@ -54,6 +54,7 @@
 
         <!-- Cabecera: canción (abre el reproductor) y ajuste de desfase. -->
         <LinearLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:gravity="center_vertical"

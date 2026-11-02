@@ -13,7 +13,7 @@ object Device {
     /** Android 12+: blur nativo, colores Material You y teñido de widgets en tiempo de ejecución. */
     val modern: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
-    /** Android 8 o equipos con poca RAM: animaciones más cortas y sin escalar texto. */
+    /** Android 8 o equipos con poca RAM: distribución ligera y sin escalar texto en karaoke. */
     fun lite(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.P ||
             context.getSystemService(ActivityManager::class.java).isLowRamDevice
@@ -25,5 +25,5 @@ object Device {
     fun lineAnimationMs(context: Context): Long = if (lite(context)) 220L else 420L
 
     /** Duración de la animación del widget (debe coincidir con res/anim y res/anim-v28). */
-    val widgetAnimationMs: Long get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 340L else 220L
+    val widgetAnimationMs: Long get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 340L else 380L
 }
