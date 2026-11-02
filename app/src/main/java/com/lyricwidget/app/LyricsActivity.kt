@@ -207,22 +207,17 @@ class LyricsActivity : Activity() {
     private val colorAnimators = HashMap<View, ValueAnimator>()
 
     /**
-     * La línea que entra se ilumina (y en equipos que lo soportan bien, crece un poco); la que
-     * sale vuelve a su estado. Cada vista cancela su animación anterior antes de empezar otra,
-     * así las líneas rápidas no se pisan.
+     * La línea que entra se ilumina de forma nítida; la que sale vuelve a su estado atenuado.
+     * Al mantener la escala uniforme (1.0x) el texto se lee perfectamente sin saltos ni pixelado.
      */
     private fun animateLine(view: TextView, current: Boolean, duration: Long) {
         val to = if (current) CURRENT_COLOR else LINE_COLOR
-        val scale = if (current && !Device.lite(this)) CURRENT_SCALE else 1f
         colorAnimators.remove(view)?.cancel()
         view.animate().cancel()
-        // Escala desde el borde izquierdo para que el texto no se salga por la izquierda.
-        view.pivotX = 0f
-        view.pivotY = view.height / 2f
+        view.scaleX = 1f
+        view.scaleY = 1f
         if (duration == 0L) {
             view.setTextColor(to)
-            view.scaleX = scale
-            view.scaleY = scale
             return
         }
         colorAnimators[view] = ValueAnimator.ofArgb(view.currentTextColor, to).apply {
@@ -230,8 +225,6 @@ class LyricsActivity : Activity() {
             addUpdateListener { view.setTextColor(it.animatedValue as Int) }
             start()
         }
-        view.animate().scaleX(scale).scaleY(scale).setDuration(duration)
-            .setInterpolator(DecelerateInterpolator()).start()
     }
 
     private fun textSp(): Float = prefs(this).getFloat(KEY_TEXT_SP, DEFAULT_TEXT_SP)
@@ -263,6 +256,5 @@ class LyricsActivity : Activity() {
         private const val FOLLOW_PAUSE_MS = 4_000L
         private const val MIN_ANIMATION_MS = 90L
         private const val BLUR_RADIUS = 90f
-        private const val CURRENT_SCALE = 1.06f
     }
 }

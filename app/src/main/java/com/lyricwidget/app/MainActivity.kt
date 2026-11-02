@@ -247,6 +247,7 @@ class MainActivity : Activity() {
         appearanceToggle(R.id.show_offset, WidgetTheme.showOffset(this), WidgetTheme::setShowOffset)
         appearanceToggle(R.id.show_title, WidgetTheme.showTitle(this), WidgetTheme::setShowTitle)
         appearanceToggle(R.id.show_progress, WidgetTheme.showProgress(this), WidgetTheme::setShowProgress)
+        appearanceToggle(R.id.animate_lines, WidgetTheme.animateLines(this), WidgetTheme::setAnimateLines)
     }
 
     private fun appearanceToggle(id: Int, checked: Boolean, save: (android.content.Context, Boolean) -> Unit) {

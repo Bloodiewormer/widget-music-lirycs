@@ -24,6 +24,6 @@ object Device {
     /** Duración de la animación de cambio de línea en la letra completa. */
     fun lineAnimationMs(context: Context): Long = if (lite(context)) 220L else 420L
 
-    /** Duración de la animación del widget (debe coincidir con res/anim y res/anim-v28). */
-    val widgetAnimationMs: Long get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 340L else 380L
+    /** Duración de la animación del widget (coincide con res/anim y res/anim-v28). */
+    val widgetAnimationMs: Long get() = 220L
 }

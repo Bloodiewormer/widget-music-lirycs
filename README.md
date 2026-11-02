@@ -53,7 +53,7 @@
 | **Búsqueda manual** | Si no encuentra la letra o trae la equivocada, corrige artista/título en la app y elige el resultado correcto. |
 | **Caché offline** | Cada letra se descarga una sola vez y queda guardada; funciona sin internet para canciones ya escuchadas. |
 | **Limpieza de títulos** | Quita "Remastered 2011", "(Official Video)", "feat. …", "- Topic", "VEVO"… y entiende títulos de YouTube tipo "Artista - Canción". |
-| **Apariencia** | Fondo tomado del color de la **portada del álbum**, oscuro, negro OLED, cristal o claro; 18 colores para la línea actual; 4 tamaños de letra. Puedes elegir cuántas líneas vecinas mostrar y ocultar los controles − / +, el título o la barra de avance. |
+| **Apariencia** | Fondo tomado del color de la **portada del álbum**, oscuro, negro OLED, cristal o claro; 18 colores para la línea actual; 4 tamaños de letra. Puedes elegir cuántas líneas vecinas mostrar, ocultar los controles − / +, el título o la barra de avance, y activar/desactivar la animación entre líneas. |
 | **Ignorar reproductores** | Desmarca las apps cuyas canciones no quieres ver (videos de YouTube, podcasts…). |
 | **Tema oscuro** | La app sigue el modo oscuro del sistema (Android 10+). |
 | **Letras sin tiempos** | Si solo hay texto plano, reparte las líneas a lo largo de la canción (marcado como "aprox."). |
@@ -63,8 +63,8 @@
 
 | | Android 8 o gama baja | Android 9 a 11 | Android 12 o superior |
 |---|---|---|---|
-| Cambio de línea en el widget | Deslizamiento con fundido de la v1.2 (380 ms) | Deslizamiento con fundido (340 ms) | Deslizamiento con fundido (340 ms) |
-| Letra completa | Solo cambio de color, más rápido | Color y escala | Color y escala |
+| Cambio de línea en el widget | Fundido suave (220 ms) sin cruce de texto | Fundido suave (220 ms) sin cruce de texto | Fundido suave (220 ms) sin cruce de texto |
+| Letra completa | Iluminación de línea y centrado suave | Iluminación de línea y centrado suave | Iluminación y blur de portada |
 | Fondo de la letra completa | Color promedio de la portada | Color promedio de la portada | Portada difuminada (blur nativo) |
 | Fondo del widget | Portada, oscuro, negro, cristal, claro | Igual | Además «Sistema» (Material You) |
 | Barra de avance | Blanca o gris | Blanca o gris | Color de acento |

@@ -83,6 +83,7 @@
     <string name="appearance_show_offset">Mostrar controles − / + en el widget</string>
     <string name="appearance_show_title">Mostrar título de la canción</string>
     <string name="appearance_show_progress">Mostrar barra de avance</string>
+    <string name="appearance_animate_lines">Transición animada entre líneas</string>
     <string name="bg_album">Portada</string>
     <string name="bg_dark">Oscuro</string>
     <string name="bg_black">Negro</string>
