@@ -121,16 +121,23 @@ object NowPlaying {
 
     fun update(controller: MediaController?) {
         val metadata = controller?.metadata
-        val title = metadata?.getString(MediaMetadata.METADATA_KEY_TITLE)
-        if (controller == null || title.isNullOrBlank()) {
+        if (controller == null || metadata == null) {
+            clear()
+            return
+        }
+        val title = metadata.getString(MediaMetadata.METADATA_KEY_TITLE)?.takeIf { it.isNotBlank() }
+            ?: metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE)?.takeIf { it.isNotBlank() }
+        if (title.isNullOrBlank()) {
             clear()
             return
         }
         val next = Track(
             title = title,
             artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST)
-                ?: metadata.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST).orEmpty(),
-            album = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM).orEmpty(),
+                ?: metadata.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST)
+                ?: metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE).orEmpty(),
+            album = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM)
+                ?: metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION).orEmpty(),
             durationMs = metadata.getLong(MediaMetadata.METADATA_KEY_DURATION),
             player = controller.packageName,
         )

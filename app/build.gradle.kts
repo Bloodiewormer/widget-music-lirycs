@@ -11,8 +11,8 @@ android {
         // Android 8.0 (Oreo) en adelante.
         minSdk = 26
         targetSdk = 37
-        versionCode = 8
-        versionName = "1.5"
+        versionCode = 9
+        versionName = "1.5.1"
     }
 
     buildTypes {
