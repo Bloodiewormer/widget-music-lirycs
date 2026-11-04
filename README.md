@@ -1,110 +1,148 @@
 <p align="center">
-  <img src="assets/icon.svg" width="96" height="96" alt="Ícono de LyricWidget">
+  <img src="assets/icon.svg" width="80" height="80" alt="Icono de LyricWidget">
 </p>
 
 <h1 align="center">LyricWidget</h1>
 
 <p align="center">
-  Un widget para la pantalla de inicio que muestra, línea por línea y sincronizada, la letra de la canción que está sonando en <b>cualquier reproductor</b>.<br>
-  Sin backend y sin cuentas: una app monolítica que consulta APIs públicas y gratuitas.
+  <b>La letra de tu música, en tu pantalla de inicio.</b><br>
+  Un widget Android con letras sincronizadas, vista completa y ajustes a tu medida.<br>
+  Sin cuentas, sin backend propio y desde Android 8.0.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
-    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.5.2-FF5A1F?logo=android&logoColor=white">
-  </a>
-  <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
-  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
-  <img alt="APK ~90 KB" src="https://img.shields.io/badge/APK-~90%20KB-FF5A1F">
-  <img alt="Sin backend" src="https://img.shields.io/badge/backend-ninguno-0F172A">
+  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest"><img src="https://img.shields.io/github/v/release/Bloodiewormer/widget-music-lirycs?style=flat-square&color=FF6B35&label=release" alt="última versión publicada"></a>
+  <img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android 8.0 o superior">
+  <img src="https://img.shields.io/badge/Kotlin-nativo-7F52FF?style=flat-square&logo=kotlin&logoColor=white" alt="Kotlin nativo">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-334155?style=flat-square" alt="Licencia MIT"></a>
+  <img src="https://img.shields.io/badge/APK-menos_de_100_KB-334155?style=flat-square" alt="APK de la versión 1.5.2: menos de 100 KB">
 </p>
-
----
-
-## ¿Qué hace?
-
-```
-╭──────────────────────────────────────────────────────────╮
-│  Canción · Artista                          −  +0.5 s  + │
-│                                                          │
-│  línea anterior                                          │
-│  LÍNEA ACTUAL, EN GRANDE Y CON COLOR                     │
-│  línea siguiente                                         │
-│  la que viene después                                    │
-│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━────────────────────── │
-╰──────────────────────────────────────────────────────────╯
-                     Letra en vivo (4×2, redimensionable)
-```
-
-1. **Detecta lo que suena** en Spotify, YouTube Music, Deezer, Apple Music, SoundCloud, reproductores locales… cualquier app que publique una sesión multimedia de Android.
-2. **Busca la letra** en [LRCLIB](https://lrclib.net) (letras sincronizadas en formato LRC) y, si no está, en [lyrics.ovh](https://lyrics.ovh) (solo texto).
-3. **Pinta la estrofa en el widget** y salta de línea solo al compás de la música. Si corriges el desfase con los botones `+`/`−`, se guarda para esa canción y calibra la latencia global (p. ej. tus audífonos Bluetooth).
-4. **Vuelve al reloj** si la música se detiene más de 2 minutos, o muestra la hora completa con fecha y batería si no hay nada sonando.
-
----
-
-## Pantallas
 
 <p align="center">
-  <img src="assets/preview-widget.png" width="360" alt="Widget en el launcher con letra sincronizada">
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/preview-app.png" width="360" alt="App de ajustes y vista completa de letra">
+  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/app-release.apk"><b>Descargar APK</b></a>
+  &nbsp; · &nbsp;
+  <a href="#instalación">Instalación</a>
+  &nbsp; · &nbsp;
+  <a href="#capturas">Capturas</a>
+  &nbsp; · &nbsp;
+  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/issues">Reportar un problema</a>
 </p>
 
----
+<p align="center">
+  <img src="assets/readme/hero.png" width="100%" alt="LyricWidget en Android 8.1: widget con título, frase actual resaltada, líneas de contexto y barra de avance">
+</p>
 
-## Características
+## Tu música, acompañada de su letra
 
-- **Sin servidores propios**: la app habla directo con LRCLIB y lyrics.ovh vía HTTPS usando solo `HttpURLConnection` del sistema.
-- **Sin bibliotecas de terceros**: cero dependencias externas en `build.gradle.kts`. Ni Retrofit, ni Coroutines, ni Jetpack Glance, ni Gson.
-- **Sincronización suave sin consumir batería**: en vez de consultar la posición cada pocos milisegundos, el widget duerme exactamente hasta el instante en que toca la próxima línea (`Handler.postDelayed`). Si la pantalla se apaga, no hay reloj corriendo.
-- **Compensación de desfase inteligente**:
-  - Ajuste manual por canción en pasos de 0.5 s desde el propio widget o desde la app.
-  - Aprendizaje automático: tras ajustar un par de canciones con Bluetooth o altavoz local, la app calcula la mediana y la aplica a las canciones nuevas.
-  - Tocar cualquier línea en la app salta el reproductor a ese momento exacto.
-- **Búsqueda manual de respaldo**: si el reproductor reporta un título recortado o con sufijos raros (`(Remastered 2011)`, `feat. ...`), puedes buscar a mano en la app y vincular la letra correcta.
-- **Caché local en disco**: las letras se guardan en el almacenamiento interno de la app en archivos LRC planos. No vuelve a gastar datos al repetir canciones.
-- **Personalización**:
-  - Paleta de color del widget: blanco puro, claro, ámbar, o tono automático extraído de la portada del álbum.
-  - Modo reloj configurable cuando no hay música activa.
-  - Posibilidad de ignorar apps específicas (p. ej. YouTube para videos o reproductores de podcasts).
-- **Compatible con Android antiguo y moderno**: funciona desde Android 8.0 (Oreo, API 26) hasta Android 16 (Baklava). En Android 12+ aprovecha las esquinas redondeadas del sistema y el difuminado con la portada del álbum.
+Reproduce una canción en tu app habitual. LyricWidget detecta la sesión multimedia, busca la letra y resalta la frase que está sonando. Puedes seguirla desde el escritorio o tocar la letra del widget para abrir la vista completa.
 
----
+Funciona con reproductores que publican su actividad mediante las sesiones multimedia de Android, como Spotify y YouTube Music. La detección depende de los metadatos que entregue cada reproductor; la disponibilidad y la sincronización de las letras dependen de las fuentes.
 
-## Descarga e instalación
+| Función | Qué puedes hacer |
+| --- | --- |
+| **Widget en vivo** | Ver la frase actual y hasta tres líneas de contexto en un widget redimensionable. |
+| **Letra completa** | Seguir la canción con la línea activa resaltada, cambiar el tamaño del texto y tocar una frase sincronizada para saltar a ese momento. |
+| **Apariencia personalizable** | Elegir fondo, color y tamaño de letra; mostrar u ocultar título, barra de avance y controles de desfase. |
+| **Sincronización ajustable** | Corregir el desfase en pasos de 0,5 s, guardar el ajuste por canción y aprovechar el aprendizaje de ajustes según reproductor y salida de audio. |
+| **Búsqueda manual** | Corregir artista o título y vincular el resultado adecuado cuando la búsqueda automática no acierta. |
+| **Caché local** | Reutilizar letras guardadas sin volver a descargarlas. Hace falta conexión para buscar letras nuevas. |
+| **Selección de reproductores** | Elegir qué apps escuchar y priorizar la sesión que está reproduciendo música. |
+| **Reloj en reposo** | Mostrar la hora cuando no hay música o tras dos minutos de pausa. |
 
-1. Ve a [Releases](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest) y descarga el archivo `app-release.apk` (pesa menos de 100 KB).
-2. Instálalo en tu dispositivo Android (permite la instalación desde fuentes desconocidas si te lo pide el navegador).
-3. Abre la app **LyricWidget** y pulsa el botón para conceder **Acceso a notificaciones** (es el permiso oficial que Android requiere para que una app pueda leer el estado y los metadatos de los reproductores multimedia vía `MediaSessionManager`).
-4. Ve a tu pantalla de inicio, mantén presionado un espacio vacío, busca el widget **LyricWidget (4×2)** y colócalo donde prefieras.
-5. Dale *Play* a cualquier canción en tu reproductor favorito.
+## Capturas
 
----
+Imágenes preparadas a partir de capturas de **LyricWidget v1.5.2** en una **Lenovo TB-X304F con Android 8.1**. Se han recortado las barras del sistema y otras apps. En el widget y la vista completa se sustituyeron el título, el artista y la letra por **texto original de demostración**; la captura de personalización conserva los ajustes reales.
 
-## Compilar desde el código fuente
+### Letra completa
 
-Requiere JDK 17 y Android SDK con `compileSdk = 37`.
+La frase activa se mantiene a la vista. Los controles inferiores permiten ajustar la sincronización y el tamaño del texto.
+
+<p align="center">
+  <img src="assets/readme/lyrics.png" width="100%" alt="Vista completa con texto de demostración, frase activa resaltada y controles de desfase y tamaño">
+</p>
+
+### Un widget a tu medida
+
+Fondos inspirados en la portada, opciones claras y oscuras, paleta de acentos y controles de visibilidad. También puedes desactivar las transiciones entre líneas.
+
+<p align="center">
+  <img src="assets/readme/customization.png" width="100%" alt="Ajustes reales: fondo, paleta de colores, tamaño de letra, líneas de contexto y opciones para ocultar los controles, el título o la barra">
+</p>
+
+## Instalación
+
+1. **Descarga** [app-release.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/app-release.apk) desde la última versión publicada.
+2. **Instala** el APK. Si Android lo solicita, permite a tu navegador o gestor de archivos instalar aplicaciones.
+3. **Abre LyricWidget** y concede el acceso a notificaciones desde el botón de la app. Android lo requiere para consultar las sesiones multimedia de otros reproductores.
+4. **Añade el widget**: mantén pulsado un espacio vacío de la pantalla de inicio → **Widgets** → **LyricWidget**.
+5. **Reproduce una canción** en una app compatible. Toca la letra del widget para verla completa o el título para abrir el reproductor.
+
+> **Android 13 o superior:** si el sistema bloquea el acceso a notificaciones por tratarse de una instalación mediante APK, abre la información de LyricWidget, permite los ajustes restringidos y vuelve a conceder el acceso.
+
+Para actualizar, instala el nuevo APK sobre la versión anterior. Los APK publicados usan una clave de pruebas; una compilación local firmada con otra clave puede no instalarse como actualización.
+
+## Pensada para distintos dispositivos
+
+| Plataforma | Comportamiento |
+| --- | --- |
+| **Android 8.0 y 8.1** | Distribución ligera y deslizamiento de 380 ms en el widget. En estos dispositivos, la barra se actualiza con las frases para evitar que el launcher repita animaciones durante los instrumentales. |
+| **Android 9 o superior** | Recursos de transición con fundido y adaptación del texto cuando el dispositivo no utiliza el modo ligero. |
+| **Android 12 o superior** | Opciones adicionales de color del sistema y difuminado de portada en la vista de letra completa. |
+| **Dispositivos con poca RAM** | Modo ligero para reducir el trabajo de presentación. |
+
+La **v1.5.2** recupera el deslizamiento del widget en Android 8, conserva la corrección de las transiciones durante los instrumentales y mantiene las mejoras de selección del reproductor. La animación fue comprobada en la tablet de las capturas.
+
+## Datos y fuentes de letras
+
+- **Sin servidor propio ni registro.** La app consulta directamente [LRCLIB](https://lrclib.net) y usa [lyrics.ovh](https://lyrics.ovh) como alternativa.
+- **Consultas de canciones.** Para buscar una letra se envían a esas fuentes los datos necesarios de la canción, como artista, título y, cuando corresponde, duración o álbum.
+- **Acceso a sesiones multimedia.** El servicio utiliza el permiso de acceso a notificaciones para detectar reproductores; no guarda el contenido de las notificaciones.
+- **Almacenamiento local.** Las letras y los ajustes se guardan en el dispositivo. La caché puede borrarse desde la app.
+- **Letras sincronizadas o texto.** Cuando la fuente ofrece marcas de tiempo, la letra sigue la reproducción; cuando solo ofrece texto, puede consultarse sin sincronización.
+
+## Desarrollo
+
+App monolítica escrita en **Kotlin**, con vistas nativas y `RemoteViews`. No incorpora bibliotecas de terceros como Retrofit, Gson o Glance: las peticiones HTTPS usan `HttpURLConnection` y los datos se guardan localmente.
+
+### Compilar
+
+Requisitos: **JDK 17**, Android SDK con **API 37** y acceso al SDK configurado en `local.properties` o en el entorno. El repositorio incluye el wrapper de Gradle.
 
 ```bash
 git clone https://github.com/Bloodiewormer/widget-music-lirycs.git
 cd widget-music-lirycs
 
-# Compilar APK Release (firmada automáticamente con la clave de pruebas)
+# macOS / Linux
 ./gradlew assembleRelease
 
-# El archivo generado queda en:
-# app/build/outputs/apk/release/app-release.apk
+# Windows PowerShell
+.\gradlew.bat assembleRelease
 ```
 
-Para instalarlo directamente por USB con `adb`:
+APK generado: `app/build/outputs/apk/release/app-release.apk`.
+
+Para instalarlo en un dispositivo conectado por USB:
 
 ```bash
 adb install -r app/build/outputs/apk/release/app-release.apk
 ```
 
----
+### Código principal
+
+| Archivo | Responsabilidad |
+| --- | --- |
+| [NowPlayingService.kt](app/src/main/java/com/lyricwidget/app/NowPlayingService.kt) | Detectar y seleccionar sesiones multimedia. |
+| [NowPlaying.kt](app/src/main/java/com/lyricwidget/app/NowPlaying.kt) | Mantener el estado de reproducción y programar los cambios de frase. |
+| [LyricsRepository.kt](app/src/main/java/com/lyricwidget/app/LyricsRepository.kt) | Consultar las fuentes y gestionar la caché. |
+| [LyricsWidget.kt](app/src/main/java/com/lyricwidget/app/LyricsWidget.kt) | Dibujar y actualizar el widget. |
+| [LyricsActivity.kt](app/src/main/java/com/lyricwidget/app/LyricsActivity.kt) | Mostrar la letra completa. |
+| [WidgetTheme.kt](app/src/main/java/com/lyricwidget/app/WidgetTheme.kt) | Gestionar la apariencia del widget. |
+| [Device.kt](app/src/main/java/com/lyricwidget/app/Device.kt) | Adaptar la presentación a la versión de Android y la memoria disponible. |
+
+## Reportar un problema
+
+Abre un [issue](https://github.com/Bloodiewormer/widget-music-lirycs/issues) e incluye la versión de LyricWidget, el modelo del dispositivo, la versión de Android y el reproductor utilizado. Para fallos de letras o sincronización, añade **canción, artista y minuto aproximado**; una captura o grabación ayuda a reproducirlo.
 
 ## Licencia
 
-Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE) para más detalles.
+El código de LyricWidget se distribuye bajo la **licencia MIT**. Consulta [LICENSE](LICENSE) para leer el texto completo.
