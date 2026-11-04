@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
-    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.5-FF5A1F?logo=android&logoColor=white">
+    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.5.1-FF5A1F?logo=android&logoColor=white">
   </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
@@ -31,115 +31,80 @@
 │  LÍNEA ACTUAL, EN GRANDE Y CON COLOR                     │
 │  línea siguiente                                         │
 │  la que viene después                                    │
-│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━───────────────────────── │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━────────────────────── │
 ╰──────────────────────────────────────────────────────────╯
                      Letra en vivo (4×2, redimensionable)
 ```
 
 1. **Detecta lo que suena** en Spotify, YouTube Music, Deezer, Apple Music, SoundCloud, reproductores locales… cualquier app que publique una sesión multimedia de Android.
 2. **Busca la letra** en [LRCLIB](https://lrclib.net) (letras sincronizadas en formato LRC) y, si no está, en [lyrics.ovh](https://lyrics.ovh) (solo texto).
-3. **La muestra en el widget**, avanzando sola al ritmo de la canción, incluso al adelantar, retroceder o pausar.
+3. **Pinta la estrofa en el widget** y salta de línea solo al compás de la música. Si corriges el desfase con los botones `+`/`−`, se guarda para esa canción y calibra la latencia global (p. ej. tus audífonos Bluetooth).
+4. **Vuelve al reloj** si la música se detiene más de 2 minutos, o muestra la hora completa con fecha y batería si no hay nada sonando.
+
+---
+
+## Pantallas
+
+<p align="center">
+  <img src="assets/preview-widget.png" width="360" alt="Widget en el launcher con letra sincronizada">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/preview-app.png" width="360" alt="App de ajustes y vista completa de letra">
+</p>
+
+---
 
 ## Características
 
-| Función | Detalle |
-|---|---|
-| **Widget redimensionable** | En equipos modernos da prioridad a la línea actual: si es larga, ocupa varias filas y ceden las líneas vecinas. En Android 8 conserva la distribución ligera de la v1.2. Barra fina con el avance de la canción. |
-| **Reloj cuando no hay música** | Sin reproductor activo, o tras 2 minutos en pausa, el widget muestra la hora y la fecha (`TextClock`, que Android actualiza sin despertar a la app). |
-| **Ajuste de desfase** | Botones `−` / `+` en el propio widget (pasos de 0.5 s), guardados por canción. La app aprende de tus correcciones: tras ajustar un par de canciones con el mismo reproductor y salida de audio (por ejemplo, audífonos Bluetooth), las canciones nuevas empiezan ya corregidas y se marcan como "auto". |
-| **Animación suave** | En el widget la línea nueva entra mientras la anterior se desvanece; en la letra completa la línea actual se ilumina y se centra. Si una parte de la canción es más corta que la animación, el cambio es instantáneo en lugar de quedar cortado. Respeta la opción del sistema que desactiva animaciones. |
-| **Refresco ligero** | En Android 9+ la barra se actualiza por separado. En Android 8 avanza al cambiar la frase: el lanzador de algunos equipos reinicia la animación incluso con una actualización parcial. |
-| **Letra completa** | Toca la letra en el widget para verla entera, sobre el color de la portada, con la línea actual resaltada y centrada. Toca cualquier línea para saltar a ese momento de la canción. Incluye desfase, tamaño de letra `A−`/`A+` y mantiene la pantalla encendida mientras suena (modo karaoke). |
-| **Búsqueda manual** | Si no encuentra la letra o trae la equivocada, corrige artista/título en la app y elige el resultado correcto. |
-| **Caché offline** | Cada letra se descarga una sola vez y queda guardada; funciona sin internet para canciones ya escuchadas. |
-| **Limpieza de títulos** | Quita "Remastered 2011", "(Official Video)", "feat. …", "- Topic", "VEVO"… y entiende títulos de YouTube tipo "Artista - Canción". |
-| **Apariencia** | Fondo tomado del color de la **portada del álbum**, oscuro, negro OLED, cristal o claro; 18 colores para la línea actual; 4 tamaños de letra. Puedes elegir cuántas líneas vecinas mostrar, ocultar los controles − / +, el título o la barra de avance, y activar/desactivar la animación entre líneas. |
-| **Ignorar reproductores** | Desmarca las apps cuyas canciones no quieres ver (videos de YouTube, podcasts…). |
-| **Tema oscuro** | La app sigue el modo oscuro del sistema (Android 10+). |
-| **Letras sin tiempos** | Si solo hay texto plano, reparte las líneas a lo largo de la canción (marcado como "aprox."). |
-| **Tolerante a fallos** | Si LRCLIB está saturado (responde 503), reintenta con consultas más simples y, si sigue caído, vuelve a intentar solo cada 30 s. |
-
-## Se adapta a cada dispositivo
-
-| | Android 8 o gama baja | Android 9 a 11 | Android 12 o superior |
-|---|---|---|---|
-| Cambio de línea en el widget | Fundido suave (220 ms) sin cruce de texto | Fundido suave (220 ms) sin cruce de texto | Fundido suave (220 ms) sin cruce de texto |
-| Letra completa | Iluminación de línea y centrado suave | Iluminación de línea y centrado suave | Iluminación y blur de portada |
-| Fondo de la letra completa | Color promedio de la portada | Color promedio de la portada | Portada difuminada (blur nativo) |
-| Fondo del widget | Portada, oscuro, negro, cristal, claro | Igual | Además «Sistema» (Material You) |
-| Barra de avance | Blanca o gris | Blanca o gris | Color de acento |
-| Esquinas del widget | 24 dp | 24 dp | Las del sistema |
-| Líneas visibles | Distribución ligera de la v1.2 | Ajustadas a la línea actual | Ajustadas a la línea actual con los tamaños exactos que informa el lanzador |
-
-## Cero impacto en batería
-
-- El widget **no se actualiza por temporizador** (`updatePeriodMillis = 0`).
-- En lugar de consultar la posición cada X ms, la app calcula cuánto falta para la siguiente línea y **duerme exactamente ese tiempo**.
-- La barra de avance se refresca como mucho cada 5 s, aprovechando los mismos despertares de las líneas.
-- Con la música en pausa, la pantalla apagada o sin widgets en el escritorio, **no corre ningún reloj**.
-- No hay red salvo al cambiar de canción (y solo si la letra no está en caché).
-
-## ¿Cómo sabe qué está sonando?
-
-Igual que [Pano Scrobbler](https://github.com/kawaiiDango/pano-scrobbler): Android solo deja leer las sesiones multimedia de otras apps (`MediaSessionManager.getActiveSessions`) a quien tiene **acceso a notificaciones**. La app declara un `NotificationListenerService` únicamente para obtener ese permiso; **las notificaciones se ignoran por completo**.
+- **Sin servidores propios**: la app habla directo con LRCLIB y lyrics.ovh vía HTTPS usando solo `HttpURLConnection` del sistema.
+- **Sin bibliotecas de terceros**: cero dependencias externas en `build.gradle.kts`. Ni Retrofit, ni Coroutines, ni Jetpack Glance, ni Gson.
+- **Sincronización suave sin consumir batería**: en vez de consultar la posición cada pocos milisegundos, el widget duerme exactamente hasta el instante en que toca la próxima línea (`Handler.postDelayed`). Si la pantalla se apaga, no hay reloj corriendo.
+- **Compensación de desfase inteligente**:
+  - Ajuste manual por canción en pasos de 0.5 s desde el propio widget o desde la app.
+  - Aprendizaje automático: tras ajustar un par de canciones con Bluetooth o altavoz local, la app calcula la mediana y la aplica a las canciones nuevas.
+  - Tocar cualquier línea en la app salta el reproductor a ese momento exacto.
+- **Búsqueda manual de respaldo**: si el reproductor reporta un título recortado o con sufijos raros (`(Remastered 2011)`, `feat. ...`), puedes buscar a mano en la app y vincular la letra correcta.
+- **Caché local en disco**: las letras se guardan en el almacenamiento interno de la app en archivos LRC planos. No vuelve a gastar datos al repetir canciones.
+- **Personalización**:
+  - Paleta de color del widget: blanco puro, claro, ámbar, o tono automático extraído de la portada del álbum.
+  - Modo reloj configurable cuando no hay música activa.
+  - Posibilidad de ignorar apps específicas (p. ej. YouTube para videos o reproductores de podcasts).
+- **Compatible con Android antiguo y moderno**: funciona desde Android 8.0 (Oreo, API 26) hasta Android 16 (Baklava). En Android 12+ aprovecha las esquinas redondeadas del sistema y el difuminado con la portada del álbum.
 
 ---
 
-## Instalación
+## Descarga e instalación
 
-### Opción A: descargar el APK (recomendado)
+1. Ve a [Releases](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest) y descarga el archivo `app-release.apk` (pesa menos de 100 KB).
+2. Instálalo en tu dispositivo Android (permite la instalación desde fuentes desconocidas si te lo pide el navegador).
+3. Abre la app **LyricWidget** y pulsa el botón para conceder **Acceso a notificaciones** (es el permiso oficial que Android requiere para que una app pueda leer el estado y los metadatos de los reproductores multimedia vía `MediaSessionManager`).
+4. Ve a tu pantalla de inicio, mantén presionado un espacio vacío, busca el widget **LyricWidget (4×2)** y colócalo donde prefieras.
+5. Dale *Play* a cualquier canción en tu reproductor favorito.
 
-**[Descargar LyricWidget-v1.5.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/LyricWidget-v1.5.apk)**
+---
 
-Ábrelo en el teléfono (permitiendo instalar apps desconocidas) o instálalo por USB:
+## Compilar desde el código fuente
+
+Requiere JDK 17 y Android SDK con `compileSdk = 37`.
 
 ```bash
-adb install -r LyricWidget-v1.5.apk
+git clone https://github.com/Bloodiewormer/widget-music-lirycs.git
+cd widget-music-lirycs
+
+# Compilar APK Release (firmada automáticamente con la clave de pruebas)
+./gradlew assembleRelease
+
+# El archivo generado queda en:
+# app/build/outputs/apk/release/app-release.apk
 ```
 
-### Opción B: compilar desde el código fuente
-
-**Requisitos:** JDK 17+ y Android SDK con `platform-tools`.
+Para instalarlo directamente por USB con `adb`:
 
 ```bash
-./gradlew assembleRelease
 adb install -r app/build/outputs/apk/release/app-release.apk
 ```
 
-> **En Windows:** usa el `adb.exe` del SDK (`%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe`) si Android Studio está abierto, para que no choquen dos servidores ADB.
-
-### Primeros pasos
-
-1. Abre **LyricWidget** → **Conceder acceso** → activa *LyricWidget* en la lista.
-   O por ADB:
-   ```bash
-   adb shell cmd notification allow_listener com.lyricwidget.app/com.lyricwidget.app.NowPlayingService
-   ```
-> **Android 13 o superior:** si al activar el acceso aparece «Configuración restringida», es porque la app se instaló desde un APK. Ve a *Ajustes → Apps → LyricWidget*, toca el menú ⋮ → **Permitir configuración restringida** y vuelve a intentarlo. La app muestra estos pasos y un botón directo cuando falta el acceso.
-
-2. Mantén presionado el escritorio → **Widgets** → **Letra en vivo**.
-3. Pon música. Tocar el título del widget abre el reproductor; tocar la letra abre los ajustes.
-
 ---
 
-## Estructura del repositorio
+## Licencia
 
-```
-app/src/main/java/com/lyricwidget/app/
-├── NowPlayingService.kt   Escucha las sesiones multimedia y elige la que suena
-├── NowPlaying.kt          Estado compartido, desfase y reloj de líneas
-├── Track.kt               Metadatos de la canción y limpieza de títulos
-├── Lyrics.kt              Parser LRC y cálculo de la línea actual
-├── LyricsRepository.kt    LRCLIB + lyrics.ovh + caché en disco (HTTP sin librerías)
-├── LyricsWidget.kt        El widget (RemoteViews) y su ajuste al tamaño
-├── WidgetTheme.kt         Fondos, colores y tamaños de letra
-├── Players.kt             Reproductores vistos e ignorados
-├── LyricsActivity.kt      Letra completa con la línea actual resaltada
-└── MainActivity.kt        Acceso, sonando ahora, búsqueda manual, reproductores, apariencia y caché
-```
-
-## Créditos
-
-- Letras: [LRCLIB](https://lrclib.net) y [lyrics.ovh](https://lyrics.ovh), APIs públicas y gratuitas. La app no incluye ninguna letra: se descargan en el dispositivo bajo demanda.
-- Detección de reproducción inspirada en [Pano Scrobbler](https://github.com/kawaiiDango/pano-scrobbler).
-- Estructura y estilo visual heredados de [PadControl](https://github.com/Bloodiewormer/padcontrol-app).
+Distribuido bajo la licencia MIT. Consulta [LICENSE](LICENSE) para más detalles.
