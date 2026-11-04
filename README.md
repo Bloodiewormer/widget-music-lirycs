@@ -11,15 +11,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest"><img src="https://img.shields.io/github/v/release/Bloodiewormer/widget-music-lirycs?style=flat-square&color=FF6B35&label=release" alt="última versión publicada"></a>
+  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest"><img src="https://img.shields.io/badge/Descargar-APK-FF6B35?style=flat-square&logo=android&logoColor=white" alt="Descargar APK"></a>
   <img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android 8.0 o superior">
   <img src="https://img.shields.io/badge/Kotlin-nativo-7F52FF?style=flat-square&logo=kotlin&logoColor=white" alt="Kotlin nativo">
   <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-334155?style=flat-square" alt="Licencia MIT"></a>
-  <img src="https://img.shields.io/badge/APK-menos_de_100_KB-334155?style=flat-square" alt="APK de la versión 1.5.2: menos de 100 KB">
+  <img src="https://img.shields.io/badge/APK-menos_de_100_KB-334155?style=flat-square" alt="APK de menos de 100 KB">
 </p>
 
 <p align="center">
-  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/app-release.apk"><b>Descargar APK</b></a>
+  <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest"><b>Descargar APK</b></a>
   &nbsp; · &nbsp;
   <a href="#instalación">Instalación</a>
   &nbsp; · &nbsp;
@@ -51,7 +51,7 @@ Funciona con reproductores que publican su actividad mediante las sesiones multi
 
 ## Capturas
 
-Imágenes preparadas a partir de capturas de **LyricWidget v1.5.2** en una **Lenovo TB-X304F con Android 8.1**. Se han recortado las barras del sistema y otras apps. En el widget y la vista completa se sustituyeron el título, el artista y la letra por **texto original de demostración**; la captura de personalización conserva los ajustes reales.
+Capturas de LyricWidget en una **Lenovo TB-X304F con Android 8.1**, recortadas y enmarcadas para destacar la interfaz. El widget y la vista completa usan **texto original de demostración**; la captura de personalización muestra los ajustes reales.
 
 ### Letra completa
 
@@ -71,7 +71,7 @@ Fondos inspirados en la portada, opciones claras y oscuras, paleta de acentos y 
 
 ## Instalación
 
-1. **Descarga** [app-release.apk](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest/download/app-release.apk) desde la última versión publicada.
+1. **Descarga** el archivo APK desde [Releases](https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest), en el apartado **Assets**.
 2. **Instala** el APK. Si Android lo solicita, permite a tu navegador o gestor de archivos instalar aplicaciones.
 3. **Abre LyricWidget** y concede el acceso a notificaciones desde el botón de la app. Android lo requiere para consultar las sesiones multimedia de otros reproductores.
 4. **Añade el widget**: mantén pulsado un espacio vacío de la pantalla de inicio → **Widgets** → **LyricWidget**.
@@ -79,18 +79,14 @@ Fondos inspirados en la portada, opciones claras y oscuras, paleta de acentos y 
 
 > **Android 13 o superior:** si el sistema bloquea el acceso a notificaciones por tratarse de una instalación mediante APK, abre la información de LyricWidget, permite los ajustes restringidos y vuelve a conceder el acceso.
 
-Para actualizar, instala el nuevo APK sobre la versión anterior. Los APK publicados usan una clave de pruebas; una compilación local firmada con otra clave puede no instalarse como actualización.
-
 ## Pensada para distintos dispositivos
 
 | Plataforma | Comportamiento |
 | --- | --- |
-| **Android 8.0 y 8.1** | Distribución ligera y deslizamiento de 380 ms en el widget. En estos dispositivos, la barra se actualiza con las frases para evitar que el launcher repita animaciones durante los instrumentales. |
-| **Android 9 o superior** | Recursos de transición con fundido y adaptación del texto cuando el dispositivo no utiliza el modo ligero. |
+| **Android 8.0 y 8.1** | Distribución ligera y deslizamiento suave entre frases en el widget. |
+| **Android 9 o superior** | Transiciones con fundido y adaptación del texto al espacio disponible cuando el dispositivo no utiliza el modo ligero. |
 | **Android 12 o superior** | Opciones adicionales de color del sistema y difuminado de portada en la vista de letra completa. |
 | **Dispositivos con poca RAM** | Modo ligero para reducir el trabajo de presentación. |
-
-La **v1.5.2** recupera el deslizamiento del widget en Android 8, conserva la corrección de las transiciones durante los instrumentales y mantiene las mejoras de selección del reproductor. La animación fue comprobada en la tablet de las capturas.
 
 ## Datos y fuentes de letras
 
