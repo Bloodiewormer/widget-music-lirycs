@@ -137,7 +137,7 @@ class LyricsWidget : AppWidgetProvider() {
         private fun build(context: Context, options: Bundle?, setFace: Boolean = true): RemoteViews {
             val views = RemoteViews(context.packageName, R.layout.widget_lyrics)
             val (prevId, currentId, nextId, next2Id) = FACES[face].toList()
-            if (!setFace || !NowPlaying.isPlaying) {
+            if (!Device.lite(context) && (!setFace || !NowPlaying.isPlaying)) {
                 val (otherPrev, otherCurrent, otherNext, otherNext2) = FACES[1 - face].toList()
                 views.setTextViewText(otherPrev, "")
                 views.setTextViewText(otherCurrent, "")

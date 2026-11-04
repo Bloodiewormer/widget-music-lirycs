@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/Bloodiewormer/widget-music-lirycs/releases/latest">
-    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.5.1-FF5A1F?logo=android&logoColor=white">
+    <img alt="Descargar APK" src="https://img.shields.io/badge/Descargar-APK%20v1.5.2-FF5A1F?logo=android&logoColor=white">
   </a>
   <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-sin%20dependencias-7F52FF?logo=kotlin&logoColor=white">
